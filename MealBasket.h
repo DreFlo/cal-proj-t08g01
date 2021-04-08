@@ -17,7 +17,7 @@ private:
     unsigned int packageNumber;
     unsigned int invoiceNumber;
     string clientName;
-    Address address;
+    Address destAddress;
 public:
     MealBasket(unsigned int packageNumber, unsigned int invoiceNumber, string clientName, Address address);
     void setPackageNumber(unsigned int packageNumber);
