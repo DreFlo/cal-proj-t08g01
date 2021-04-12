@@ -18,8 +18,8 @@
 
 \Procedure {Knapsack} {M}
 
-\State $cost \gets M + 1 \text{ array of 0's}$
-\State $best \gets M + 1 \text{ array of 0's}$
+\State $cost \gets M + 1 \text{ lenght array of 0's}$
+\State $best \gets M + 1 \text{ lenght array of 0's}$
 
 \For{i \textbf{from} 1 \text{to} N}
 	\For{k \textbf{from} size[i] \text{to} M}
@@ -34,6 +34,31 @@
 \For{k \textbf{from} M \text{to} 0 \text{step} size[best[k]]}
 	\State print(best[k])
 \EndFor
+
+\EndProcedure
+
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Held-Karp - Dynamic Programming}
+\begin{algorithmic}[1]
+
+\Procedure {TSP} {G, n}
+
+\For{k $:=$ 2 \textbf{to} n}
+	\State $C(\{k\}, k) := d _{1, k}$
+\EndFor
+
+\For{s $:=$ \textbf{to} n - 1}
+	\For{\textbf{all} S $\subseteq \{2, ..., n\}, |S| = s$}
+		\For{\textbf{all} $k \in S$}
+			\State C(S, k) := $min_{m \neq k, m \in S}$ [C(S\\\{k\}, m + $d_{m, k}$]
+		\EndFor
+	\EndFor
+\EndFor
+
+\State \textbf{return}  $min_{k \neq 1} [C(\{2, ..., n\}, k) + d_{k, 1}]$
 
 \EndProcedure
 
