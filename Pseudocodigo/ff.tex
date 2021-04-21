@@ -19,11 +19,11 @@
 \caption{Knapsack Algorithm - Dynamic Programming}
 \begin{algorithmic}[1]
 
-\Procedure {Knapsack} {M}
 
 \State $cost \gets M + 1 \text{ lenght array of 0's}$
 \State $best \gets M + 1 \text{ lenght array of 0's}$
 
+\Procedure {Knapsack} {M}
 \For{i \textbf{from} 1 \text{to} N}
 	\For{k \textbf{from} size[i] \text{to} M}
 		\If{val[i] + cost[k-size[i]] $>$ cost[k]}
@@ -32,37 +32,6 @@
 		\EndIf
 	\EndFor
 \EndFor
-
-\State print(cost[M])
-\For{k \textbf{from} M \text{to} 0 \text{step} size[best[k]]}
-	\State print(best[k])
-\EndFor
-
-\EndProcedure
-
-\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[h]
-\caption{Held-Karp - Dynamic Programming}
-\begin{algorithmic}[1]
-
-\Procedure {TSP} {G, n}
-
-\For{k $:=$ 2 \textbf{to} n}
-	\State $C(\{k\}, k) := d _{1, k}$
-\EndFor
-
-\For{s $:=$ \textbf{to} n - 1}
-	\For{\textbf{all} S $\subseteq \{2, ..., n\}, |S| = s$}
-		\For{\textbf{all} $k \in S$}
-			\State C(S, k) := $min_{m \neq k, m \in S}$ [C(S\\\{k\}, m + $d_{m, k}$]
-		\EndFor
-	\EndFor
-\EndFor
-
-\State \textbf{return}  $min_{k \neq 1} [C(\{2, ..., n\}, k) + d_{k, 1}]$
-
 \EndProcedure
 
 \end{algorithmic}
@@ -72,10 +41,10 @@
 \caption{Floyd-Warshall with path reconstruction}
 \begin{algorithmic}[1]
 
-\State \textbf{let} dist be a $\vert V \vert \times \vert V \vert$ array of minimum distances initialized to $\infty$
-\State \textbf{let} next be a $\vert V \vert \times \vert V \vert$ array of vertex indices initialized to \textbf{null}
+\State $dist \gets  \vert V \vert \times \vert V \vert$ length array of minimum distances initialized to $\infty$
+\State $next \gets \vert V \vert \times \vert V \vert$ length array of vertex indices initialized to \textbf{null}
 
-\Procedure {Floyd-Warshall(Path Recontruction)}{}
+\Procedure {Floyd-Warshall(Path Reconstruction)}{}
 
 \ForEach {\text{edge(u, v)}}
 	\State $dist[u][v] \gets w(u, v)$
@@ -94,6 +63,13 @@
 \EndFor
 
 \EndProcedure
+
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Path reconstruction}
+\begin{algorithmic}[1]
 
 \Procedure {GetPath}{u, v}
 
@@ -115,21 +91,26 @@
 \end{algorithmic}
 \end{algorithm}
 
+
 \begin{algorithm}[h]
-\caption{Nearest Neighbour}
+\caption{TSP by Nearest Neighbour}
 \begin{algorithmic}[1]
+
+\State V $\gets$ vertices representing all destinations in the route
+
 \Procedure {Nearest Neighbour}{\textbf{Vertex} P}
 
-\State \textbf{queue} nodesSorted
-\State result = $[]$
-\State $V _{t} \gets V$
+\State \textbf{queue} sortedVertices $\gets V \setminus \{P\}$
+\State result = $[P]$
 
-\While{$\vert V _{t} \vert > 0$}
-	\State nodesSorted.resortRelativeTo(P)
+\While{$\vert sortedVertices \vert > 0$}
+	\State sortedVertices.sortRelativeTo(P)
+	\State $P \gets sortedVertices.front()$
+	\State sortedVertices.pop()
 	\State result.append(P)
-	\State $P \gets result[0]$
-	\State nodesSort.removeTop()
 \EndWhile
+
+\State result.append(result[0])
 
 \State \textbf{return} result
 \EndProcedure
