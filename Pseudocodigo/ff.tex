@@ -10,6 +10,9 @@
 \usepackage[table,xcdraw]{xcolor}
 \usepackage[noend]{algpseudocode}
 
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+
 \begin{document}
 
 \begin{algorithm}[h]
@@ -60,6 +63,75 @@
 
 \State \textbf{return}  $min_{k \neq 1} [C(\{2, ..., n\}, k) + d_{k, 1}]$
 
+\EndProcedure
+
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Floyd-Warshall with path reconstruction}
+\begin{algorithmic}[1]
+
+\State \textbf{let} dist be a $\vert V \vert \times \vert V \vert$ array of minimum distances initialized to $\infty$
+\State \textbf{let} next be a $\vert V \vert \times \vert V \vert$ array of vertex indices initialized to \textbf{null}
+
+\Procedure {Floyd-Warshall(Path Recontruction)}{}
+
+\ForEach {\text{edge(u, v)}}
+	\State $dist[u][v] \gets w(u, v)$
+	\State $next[u][v] \gets v$
+\EndFor
+
+\For{$k = 1 to \vert V \vert$}
+	\For{$i = 1 to \vert V \vert$}
+		\For{$j = 1 to \vert V \vert$}
+			\If{$dist[u][v] > dist[i][k] + dist[k][j]$}
+				\State $dist[u][v] \gets dist[i][k] + dist[k][j]$
+				\State $next[i][j] \gets next[i][k]$
+			\EndIf
+		\EndFor
+	\EndFor
+\EndFor
+
+\EndProcedure
+
+\Procedure {GetPath}{u, v}
+
+\If{$next[u][v] = \textbf{null}$}
+	\State \textbf{return} $[]$
+\EndIf
+
+\State $path = [u]$
+
+\While{$u \neq v$}
+	\State $u \gets next[u][v]$
+	\State \text{path.append(u)}
+\EndWhile
+
+\State \textbf{return} path
+
+\EndProcedure
+
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Nearest Neighbour}
+\begin{algorithmic}[1]
+\Procedure {Nearest Neighbour}{\textbf{Vertex} P}
+
+\State \textbf{queue} nodesSorted
+\State result = $[]$
+\State $V _{t} \gets V$
+
+\While{$\vert V _{t} \vert > 0$}
+	\State nodesSorted.resortRelativeTo(P)
+	\State result.append(P)
+	\State $P \gets result[0]$
+	\State nodesSort.removeTop()
+\EndWhile
+
+\State \textbf{return} result
 \EndProcedure
 
 \end{algorithmic}
