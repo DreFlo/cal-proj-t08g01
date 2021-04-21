@@ -93,13 +93,13 @@
 
 \Procedure {Nearest Neighbour}{\textbf{Vertex} P}
 
-\State \textbf{queue} sortedVertices $\gets V \setminus \{P\}$
+\State sortedVertices $\gets V \setminus \{P\}$
 \State result = $[P]$
 
 \While{$\vert sortedVertices \vert > 0$}
 	\State sortedVertices.sortRelativeTo(P)
-	\State $P \gets sortedVertices.front()$
-	\State sortedVertices.pop()
+	\State $P \gets sortedVertices[0]$
+	\State sortedVertices.remove(P)
 	\State result.append(P)
 \EndWhile
 
