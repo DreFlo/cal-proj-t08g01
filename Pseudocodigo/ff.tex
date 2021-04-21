@@ -51,9 +51,9 @@
 	\State $next[u][v] \gets v$
 \EndFor
 
-\For{$k = 1 to \vert V \vert$}
-	\For{$i = 1 to \vert V \vert$}
-		\For{$j = 1 to \vert V \vert$}
+\For{k = 1 to $\vert V \vert$}
+	\For{i = 1 to $\vert V \vert$}
+		\For{j = 1 to $\vert V \vert$}
 			\If{$dist[u][v] > dist[i][k] + dist[k][j]$}
 				\State $dist[u][v] \gets dist[i][k] + dist[k][j]$
 				\State $next[i][j] \gets next[i][k]$
