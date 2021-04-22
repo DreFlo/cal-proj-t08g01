@@ -16,28 +16,6 @@
 \begin{document}
 
 \begin{algorithm}[h]
-\caption{Knapsack Algorithm - Dynamic Programming}
-\begin{algorithmic}[1]
-
-
-\State $cost \gets M + 1 \text{ lenght array of 0's}$
-\State $best \gets M + 1 \text{ lenght array of 0's}$
-
-\Procedure {Knapsack} {M}
-\For{i \textbf{from} 1 \text{to} N}
-	\For{k \textbf{from} size[i] \text{to} M}
-		\If{val[i] + cost[k-size[i]] $>$ cost[k]}
-			\State cost[k] = val[i] + cost[k-size[i]]
-			\State best[k] = i
-		\EndIf
-	\EndFor
-\EndFor
-\EndProcedure
-
-\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[h]
 \caption{Floyd-Warshall with path reconstruction}
 \begin{algorithmic}[1]
 
