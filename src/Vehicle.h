@@ -1,13 +1,13 @@
-//
-// Created by andre on 3/20/2021.
-//
-
 #ifndef PROJ_VEHICLE_H
 #define PROJ_VEHICLE_H
 
+#include <vector>
+#include "MealBasket.h"
+
+using namespace std;
 
 class Vehicle {
-    //TODO
+    vector<MealBasket> meals;
 };
 
 
