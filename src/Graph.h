@@ -2,57 +2,65 @@
 #define PROJ_GRAPH_H
 
 #include <vector>
+#include <climits>
 
 using namespace std;
 
 template <class T> class Edge;
-template <class T> class Vertex;
+template <class T> class Node;
 template <class T> class Graph;
 
 template <class T>
-class Vertex {
+class Node {
 private:
-    T contents; //node contents
+    T contents;
+    //node contents
     vector<Edge<T>> connections;    //edges leaving from the node
     bool visited;
     bool processing;
     int indegree;
+    bool hidden;//if this node is transversable
+    size_t posAtVec;//saves the position of the node in the graph's nodeSet
 
     /**
      * @brief Adds a new edge to the node
      * @param dest Destination of the edge
      * @param weight Edge weight
      */
-    void addEdge(Vertex<T> *dest, double weight);
+    void addEdge(Node<T> *dest, double weight);
     /**
      * @brief Removes an edge from the node
      * @param dest Destination of the edge to remove
      * @return true if edge existed and was removed, false otherwise
      */
-    bool removeEdgeTo(Vertex<T> *dest);
+    bool removeEdgeTo(Node<T> *dest);
 public:
-    explicit Vertex(T contents);
+    explicit Node(T contents);
     friend class Graph<T>;
+    T getContents() const;
+
+    void setContents(T contents);
 };
 
 template <class T>
 class Edge {
 private:
-    Vertex<T> *dest;
+    Node<T> *dest;
     double weight;
 public:
-    Edge(Vertex<T> *dest, double weight);
+    Edge(Node<T> *dest, double weight);
     friend class Graph<T>;
-    friend class Vertex<T>;
+    friend class Node<T>;
 };
 
 template <class T>
 class Graph {
 private:
-    vector<Vertex<T> *> vertexSet;  //node set
+    vector<Node<T> *> nodeSet;  //node set
+    vector<vector<double>> dist;//weights
+    vector<vector<int>> next;//to reconstruct the path after running the algorithm
 
-    Vertex<T> *findVertex(const T &contents) const;
-    //TODO idk qual o melhor metodo de procura
+    Node<T> *findNode(const T &contents) const;
 public:
     /**
      * @return Number of nodes in the graph
@@ -88,7 +96,11 @@ public:
 
     bool removeUnnecessaryEdges(const T &source);
 
-    
+    double edgeCost(int i, int j);
+    int nodePrev(int i, int j);
+    void floydWarshallShortestPath();
+    vector<Node<T> * > getFloydWarshallPath(Node<T> * u, Node<T> * v);
+    Node<T> * operator[](int n);
 };
 
 
