@@ -114,7 +114,7 @@ public:
 
     /**
      * Floyd Warshall Algorithm
-     *  Algorithm used to calculate the shortest path between all the paris of nodes
+     *  Algorithm used to calculate the shortest path between all the pairs of nodes
      *  in the graph
      */
     void floydWarshallShortestPath();
