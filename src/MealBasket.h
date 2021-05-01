@@ -7,26 +7,25 @@
 
 #include <iostream>
 
-using namespace std;
 
 //TODO probs vai ter de ser um classe msm
-typedef string Address;
+typedef std::string Address;
 
 class MealBasket {
 private:
     unsigned int packageNumber;
     unsigned int invoiceNumber;
-    string clientName;
+    std::string clientName;
     Address destAddress;
 public:
-    MealBasket(unsigned int packageNumber, unsigned int invoiceNumber, string clientName, Address address);
+    MealBasket(unsigned int packageNumber, unsigned int invoiceNumber, std::string clientName, Address address);
     void setPackageNumber(unsigned int packageNumber);
     void setInvoiceNumber(unsigned int invoiceNumber);
-    void setClientName(string clientName);
+    void setClientName(std::string clientName);
     void setAddress(Address address);
     unsigned int getPackageNumber() const;
     unsigned int getInvoiceNumber() const;
-    string getClientName() const;
+    std::string getClientName() const;
     Address getAddress() const;
 };
 

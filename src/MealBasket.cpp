@@ -6,6 +6,8 @@
 
 #include <utility>
 
+using namespace std;
+
 MealBasket::MealBasket(unsigned int packageNumber, unsigned int invoiceNumber, string clientName, Address address)
         : packageNumber(packageNumber), invoiceNumber(invoiceNumber), clientName(std::move(clientName)), destAddress(std::move(address)) {}
 

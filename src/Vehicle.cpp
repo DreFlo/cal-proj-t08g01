@@ -1,3 +1,7 @@
 #include "Vehicle.h"
 
-Vehicle::Vehicle(vector<MealBasket> &meals):meals(meals), type(HEAVY), cap(UINT_MAX) {}
+using namespace std;
+
+Vehicle::Vehicle():type(HEAVY), cap(UINT_MAX) {}
+
+int Vehicle::getFive() { return 5; }

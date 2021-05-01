@@ -13,7 +13,8 @@ class Vehicle {
     vehicle_type type;
     unsigned int cap;
 public:
-    explicit Vehicle(vector<MealBasket> & meals);
+    explicit Vehicle();
+    int getFive();
 };
 
 
