@@ -150,16 +150,19 @@ int Graph<T>::nodePrev(int i, int j) {
 }
 
 template<class T>
-vector<Node<T> *> Graph<T>::getFloydWarshallPath(Node<T> *src, Node<T> *dest) {
-    vector<Node<T> * > result;
+vector<T> Graph<T>::getFloydWarshallPath(const T &source, const T &destination) {
+    Node<T>* src = findNode(source);
+    Node<T>* dest = findNode(destination);
+
+    vector<T> result;
     int v = src->posAtVec, w = dest->posAtVec;
 
-    result.push_back(nodeSet[v]);
+    result.push_back(nodeSet[v].info);
     while (v != w) {
         v = next[v][w];
         if (v < 0)
             break;
-        result.push_back(nodeSet[v]);
+        result.push_back(nodeSet[v].info);
     }
     return result;
 }

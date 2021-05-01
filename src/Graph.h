@@ -120,10 +120,12 @@ public:
     void floydWarshallShortestPath();
 
     /**
-     * Sequence of elemetns in the graph in the path from u to v
-     * @return vector with path+
+     * Sequence of elements in the graph in the path from u to v
+     * @param source info from the initial node
+     * @param destination info from the final node
+     * @return vector with path
      */
-    vector<Node<T> * > getFloydWarshallPath(Node<T> * u, Node<T> * v);
+    vector<T> getFloydWarshallPath(const T &source, const T &destination);
 
     /**
      * Return the Node in nodeSet with index n
