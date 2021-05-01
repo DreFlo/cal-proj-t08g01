@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Graph.h"
+#include "Vehicle.h"
 
 using namespace std;
 
@@ -17,7 +18,6 @@ int main() {
     myGraph.addEdge(3, 5, 2);
     myGraph.addEdge(4, 6, 2);
     myGraph.addEdge(5, 6, 3);
-
     myGraph.removeUnnecessaryEdges(1);
 
     for(auto node : myGraph.getNodeSet()){

@@ -18,7 +18,7 @@ class Node {
 private:
     T contents;
     //node contents
-    vector<Edge<T>> connections;    //edges leaving from the node
+    std::vector<Edge<T>> connections;    //edges leaving from the node
     bool visited;
     bool processing;
     int indegree;
@@ -61,9 +61,9 @@ public:
 template <class T>
 class Graph {
 private:
-    vector<Node<T> *> nodeSet;  //node set
-    vector<vector<double>> dist;//weights
-    vector<vector<int>> next;//to reconstruct the path after running the algorithm
+    std::vector<Node<T> *> nodeSet;  //node set
+    std::vector<std::vector<double>> dist;//weights
+    std::vector<std::vector<int>> next;//to reconstruct the path after running the algorithm
 
     Node<T> *findNode(const T &contents) const;
     /**
@@ -109,12 +109,43 @@ public:
     bool removeEdge(const T &source, const T &dest);
     std::vector<Node<T>*> getNodeSet() const;
 
+    /**
+     * Remove the unnecessary edges, setting the weight value to infinite
+     * @param source initial node
+     */
     void removeUnnecessaryEdges(const T &source);
 
+    /**
+     * Return the weight value from edge between the node with index i and j
+     * @return
+     */
     double edgeCost(int i, int j);
+
+    /**
+     * Return the nest node of the path
+     * @return return -1 if j is not the next path, j otherwise
+     */
     int nodePrev(int i, int j);
+
+    /**
+     * Floyd Warshall Algorithm
+     *  Algorithm used to calculate the shortest path between all the pairs of nodes
+     *  in the graph
+     */
     void floydWarshallShortestPath();
-    std::vector<Node<T> * > getFloydWarshallPath(Node<T> * u, Node<T> * v);
+
+    /**
+     * Sequence of elements in the graph in the path from u to v
+     * @param source info from the initial node
+     * @param destination info from the final node
+     * @return vector with path
+     */
+    std::vector<T> getFloydWarshallPath(const T &source, const T &destination);
+
+    /**
+     * Return the Node in nodeSet with index n
+     * @return Node in nodeSet with index n
+     */
     Node<T> * operator[](int n);
 };
 
@@ -145,7 +176,7 @@ T Node<T>::getContents() const {
 
 template<class T>
 void Node<T>::setContents(T contents) {
-    Node::contents = contents;
+    this->contents = contents;
 }
 
 template<class T>
@@ -247,12 +278,12 @@ void Graph<T>::removeUnnecessaryEdges(const T &source){
 }
 
 template<class T>
-void Graph<T>::dfs(const T &source){
+void Graph<T>::dfs(const T &source) {
     auto node = findNode(source);
     node->visited = true;
 
-    for(auto edge : node->connections){
-        if(!(edge.dest->visited)){
+    for (auto edge : node->connections) {
+        if (!(edge.dest->visited)) {
             dfs(source);
         }
     }
@@ -264,7 +295,7 @@ void Graph<T>::floydWarshallShortestPath() {
     dist = vector<vector<double> >(N, vector<double>(N));
     next = vector<vector<int> >(N, vector<int>(N));
 
-    //first step, set weight and previous
+    // Set dist to edge cost, and previous edge
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++) {
             dist[i][j] = edgeCost(i, j);
@@ -308,17 +339,19 @@ int Graph<T>::nodePrev(int i, int j) {
 }
 
 template<class T>
-vector<Node<T> *> Graph<T>::getFloydWarshallPath(Node<T> *src, Node<T> *dest) {
-    vector<Node<T> * > result;
-    int found = 0;
+vector<T> Graph<T>::getFloydWarshallPath(const T &source, const T &destination) {
+    Node<T>* src = findNode(source);
+    Node<T>* dest = findNode(destination);
+
+    vector<T> result;
     int v = src->posAtVec, w = dest->posAtVec;
 
-    result.push_back(nodeSet[v]);
+    result.push_back(nodeSet[v].info);
     while (v != w) {
         v = next[v][w];
         if (v < 0)
             break;
-        result.push_back(nodeSet[v]);
+        result.push_back(nodeSet[v].info);
     }
     return result;
 }
@@ -327,7 +360,5 @@ template<class T>
 Node<T> *Graph<T>::operator[](int n) {
     return nodeSet[n];
 }
-
-
 
 #endif //PROJ_GRAPH_H
