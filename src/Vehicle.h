@@ -6,8 +6,14 @@
 
 using namespace std;
 
+enum vehicle_type {HEAVY, LIGHT, MOTORCYCLE};
+
 class Vehicle {
     vector<MealBasket> meals;
+    vehicle_type type;
+    unsigned int cap;
+public:
+    explicit Vehicle(vector<MealBasket> & meals);
 };
 
 
