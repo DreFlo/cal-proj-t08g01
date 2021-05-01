@@ -85,6 +85,10 @@ public:
      * @return true if edge existed and was removed, false otherwise
      */
     bool removeEdge(const T &source, const T &dest);
+
+    bool removeUnnecessaryEdges(const T &source);
+
+    
 };
 
 

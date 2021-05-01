@@ -84,3 +84,8 @@ bool Graph<T>::removeEdge(const T &source, const T &dest) {
     }
     return false;
 }
+
+template<class T>
+bool Graph<T>::removeUnnecessaryEdges(const T &source){
+    return false;
+}

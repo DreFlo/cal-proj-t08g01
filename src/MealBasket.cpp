@@ -7,7 +7,7 @@
 #include <utility>
 
 MealBasket::MealBasket(unsigned int packageNumber, unsigned int invoiceNumber, string clientName, Address address)
-        : packageNumber(packageNumber), invoiceNumber(invoiceNumber), clientName(std::move(clientName)), address(std::move(address)) {}
+        : packageNumber(packageNumber), invoiceNumber(invoiceNumber), clientName(std::move(clientName)), destAddress(std::move(address)) {}
 
 void MealBasket::setPackageNumber(unsigned int packageNumber) {
     this->packageNumber = packageNumber;
@@ -22,21 +22,21 @@ void MealBasket::setClientName(string clientName) {
 }
 
 void MealBasket::setAddress(Address address) {
-    this->address = address;
+    this->destAddress = address;
 }
 
 unsigned int MealBasket::getPackageNumber() const {
-    return packageNumber;
+    return this->packageNumber;
 }
 
 unsigned int MealBasket::getInvoiceNumber() const {
-    return invoiceNumber;
+    return this->invoiceNumber;
 }
 
 string MealBasket::getClientName() const {
-    return clientName;
+    return this->clientName;
 }
 
 Address MealBasket::getAddress() const {
-    return address;
+    return this->destAddress;
 }
