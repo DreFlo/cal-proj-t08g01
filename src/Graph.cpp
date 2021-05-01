@@ -27,7 +27,7 @@ T Node<T>::getContents() const {
 
 template<class T>
 void Node<T>::setContents(T contents) {
-    Node::contents = contents;
+    this->contents = contents;
 }
 
 template<class T>
@@ -106,7 +106,7 @@ void Graph<T>::floydWarshallShortestPath() {
     dist = vector<vector<double> >(N, vector<double>(N));
     next = vector<vector<int> >(N, vector<int>(N));
 
-    //first step, set weight and previous
+    // Set dist to edge cost, and previous edge
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++) {
             dist[i][j] = edgeCost(i, j);
@@ -152,7 +152,6 @@ int Graph<T>::nodePrev(int i, int j) {
 template<class T>
 vector<Node<T> *> Graph<T>::getFloydWarshallPath(Node<T> *src, Node<T> *dest) {
     vector<Node<T> * > result;
-    int found = 0;
     int v = src->posAtVec, w = dest->posAtVec;
 
     result.push_back(nodeSet[v]);
