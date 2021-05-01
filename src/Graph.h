@@ -94,12 +94,41 @@ public:
      */
     bool removeEdge(const T &source, const T &dest);
 
+    /**
+     * Remove the unnecessary edges, setting the weight value to infinite
+     * @param source initial node
+     */
     bool removeUnnecessaryEdges(const T &source);
 
+    /**
+     * Return the weight value from edge between the node with index i and j
+     * @return
+     */
     double edgeCost(int i, int j);
+
+    /**
+     * Return the nest node of the path
+     * @return return -1 if j is not the next path, j otherwise
+     */
     int nodePrev(int i, int j);
+
+    /**
+     * Floyd Warshall Algorithm
+     *  Algorithm used to calculate the shortest path between all the paris of nodes
+     *  in the graph
+     */
     void floydWarshallShortestPath();
+
+    /**
+     * Sequence of elemetns in the graph in the path from u to v
+     * @return vector with path+
+     */
     vector<Node<T> * > getFloydWarshallPath(Node<T> * u, Node<T> * v);
+
+    /**
+     * Return the Node in nodeSet with index n
+     * @return Node in nodeSet with index n
+     */
     Node<T> * operator[](int n);
 };
 
