@@ -18,4 +18,12 @@ int main() {
     myGraph.addEdge(3, 5, 2);
     myGraph.addEdge(4, 6, 2);
     myGraph.addEdge(5, 6, 3);
+    myGraph.removeUnnecessaryEdges(1);
+
+    for(auto node : myGraph.getNodeSet()){
+        for(auto edge : node->getConnections()){
+            cout << edge.getWeight() << endl;
+        }
+    }
+    return 0;
 }

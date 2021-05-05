@@ -3,8 +3,11 @@
 
 #include <vector>
 #include <climits>
+#include <limits>
 
 using namespace std;
+
+#define DOUBLE_MAX numeric_limits<double>::max();
 
 template <class T> class Edge;
 template <class T> class Node;
@@ -40,6 +43,7 @@ public:
     T getContents() const;
 
     void setContents(T contents);
+    vector<Edge<T>> getConnections();
 };
 
 template <class T>
@@ -51,6 +55,7 @@ public:
     Edge(Node<T> *dest, double weight);
     friend class Graph<T>;
     friend class Node<T>;
+    double getWeight();
 };
 
 template <class T>
@@ -61,6 +66,15 @@ private:
     std::vector<std::vector<int>> next;//to reconstruct the path after running the algorithm
 
     Node<T> *findNode(const T &contents) const;
+    /**
+     * @brief Sets visited to false for all nodes
+     */
+    void resetVisited();
+    /**
+     * @brief Depth-first search on graph
+     * @param source Node to start dfs in
+     */
+    void dfs(const T &source);
 public:
     /**
      * @return Number of nodes in the graph
@@ -93,12 +107,13 @@ public:
      * @return true if edge existed and was removed, false otherwise
      */
     bool removeEdge(const T &source, const T &dest);
+    std::vector<Node<T>*> getNodeSet() const;
 
     /**
      * Remove the unnecessary edges, setting the weight value to infinite
      * @param source initial node
      */
-    bool removeUnnecessaryEdges(const T &source);
+    void removeUnnecessaryEdges(const T &source);
 
     /**
      * Return the weight value from edge between the node with index i and j
@@ -165,15 +180,30 @@ void Node<T>::setContents(T contents) {
 }
 
 template<class T>
+vector<Edge<T>> Node<T>::getConnections() {
+    return connections;
+}
+
+template<class T>
 Edge<T>::Edge(Node<T> *dest, double weight) {
     this->dest = dest;
     this->weight = weight;
 }
 
 template<class T>
+double Edge<T>::getWeight(){
+    return weight;
+}
+
+template<class T>
 Node<T> *Graph<T>::findNode(const T &contents) const {
     for (auto node : nodeSet) if (node->contents == contents) return node;
     return nullptr;
+}
+
+template<class T>
+void Graph<T>::resetVisited() {
+    for(auto node : nodeSet) node->visited = false;
 }
 
 template<class T>
@@ -230,8 +260,33 @@ bool Graph<T>::removeEdge(const T &source, const T &dest) {
 }
 
 template<class T>
-bool Graph<T>::removeUnnecessaryEdges(const T &source){
-    return false;
+vector<Node<T>*> Graph<T>::getNodeSet() const {
+    return nodeSet;
+}
+
+template<class T>
+void Graph<T>::removeUnnecessaryEdges(const T &source){
+    resetVisited();
+    dfs(source);
+    for(auto node : nodeSet){
+        if (!node->visited){
+            for(auto edge : node->connections){
+                edge.weight = DOUBLE_MAX;
+            }
+        }
+    }
+}
+
+template<class T>
+void Graph<T>::dfs(const T &source) {
+    auto node = findNode(source);
+    node->visited = true;
+
+    for (auto edge : node->connections) {
+        if (!(edge.dest->visited)) {
+            dfs(source);
+        }
+    }
 }
 
 template<class T>
