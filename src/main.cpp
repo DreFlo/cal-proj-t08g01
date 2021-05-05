@@ -1,29 +1,33 @@
 #include <iostream>
 #include "Graph.h"
-#include "Vehicle.h"
 
 using namespace std;
 
 int main() {
     Graph<int> myGraph;
 
-    for(int i = 1; i < 8; i++)
+    for(int i = 1; i < 7; i++)
         myGraph.addNode(i);
 
-    myGraph.addEdge(1, 2, 3);
-    myGraph.addEdge(1, 3, 2);
-    myGraph.addEdge(2, 5, 4);
-    myGraph.addEdge(2, 4, 3);
-    myGraph.addEdge(2, 3, 1);
-    myGraph.addEdge(3, 5, 2);
-    myGraph.addEdge(4, 6, 2);
-    myGraph.addEdge(5, 6, 3);
-    myGraph.removeUnnecessaryEdges(1);
+    myGraph.addBiEdge(1, 2, 3);
+    myGraph.addBiEdge(1, 3, 2);
+    myGraph.addBiEdge(2, 5, 4);
+    myGraph.addBiEdge(2, 4, 3);
+    myGraph.addBiEdge(2, 3, 1);
+    myGraph.addBiEdge(3, 5, 2);
+    myGraph.addBiEdge(4, 6, 2);
+    myGraph.addBiEdge(5, 6, 3);
 
-    for(auto node : myGraph.getNodeSet()){
-        for(auto edge : node->getConnections()){
-            cout << edge.getWeight() << endl;
-        }
+    std::vector<int> vec = {1, 2, 3, 4, 5};
+    myGraph.floydWarshallShortestPath();
+
+    myGraph.printDist();
+
+    myGraph.sortRelativeToDistQuick(0, vec);
+
+    for(auto i: vec) {
+        cout << i << "\t";
     }
+    cout << endl;
     return 0;
 }

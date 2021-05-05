@@ -62,7 +62,12 @@ template <class T>
 class Graph {
 private:
     std::vector<Node<T> *> nodeSet;  //node set
-    std::vector<std::vector<double>> dist;//weights
+    std::vector<std::vector<double>> dist;
+public:
+    const vector<std::vector<double>> &getDist() const;
+
+private:
+//weights
     std::vector<std::vector<int>> next;//to reconstruct the path after running the algorithm
 
     Node<T> *findNode(const T &contents) const;
@@ -99,7 +104,11 @@ public:
      * @param weight Weight of the connection
      * @return true if both nodes exists and edge was added, false otherwise
      */
-    bool addEdge(const T &source, const T &dest, double weight);
+    bool addUniEdge(const T &source, const T &dest, double weight);
+
+    // TODO: Comment
+    void addBiEdge(const T &source, const T &dest, double weight);
+
     /**
      * @brief Removes an edge from the graph
      * @param source Contents of the source of the edge
@@ -147,6 +156,15 @@ public:
      * @return Node in nodeSet with index n
      */
     Node<T> * operator[](int n);
+
+
+    // TODO: comment
+    void sortRelativeToDistQuick(T info, std::vector<T> &sortedNodes, int i = -1, int j = 100);
+    void sortRelativeToDistInsertion(T info, std::vector<T> &sortedNodes);
+
+    std::vector<T> getNearestNeighbour(T info);
+
+    void printDist() const;
 };
 
 template<class T>
@@ -241,7 +259,7 @@ bool Graph<T>::removeNode(const T &contents) {
 }
 
 template<class T>
-bool Graph<T>::addEdge(const T &source, const T &dest, double weight) {
+bool Graph<T>::addUniEdge(const T &source, const T &dest, double weight) {
     Node<T> *sourceTargetNode, *destTargetNode;
     if ((sourceTargetNode = findNode(source)) != nullptr && (destTargetNode = findNode(dest)) != nullptr) {
         sourceTargetNode->addEdge(destTargetNode, weight);
@@ -359,6 +377,100 @@ vector<T> Graph<T>::getFloydWarshallPath(const T &source, const T &destination) 
 template<class T>
 Node<T> *Graph<T>::operator[](int n) {
     return nodeSet[n];
+}
+
+template<class T>
+std::vector<T> Graph<T>::getNearestNeighbour(T info) {
+
+    std::vector<T> sortedVertices;
+
+    for(Node<T>* node: nodeSet)
+        if(node->info != info)
+            sortedVertices.push_back(node->info);
+
+
+
+    std::vector<T> result;
+    result.push_back(info);
+
+    while(!sortedVertices.empty()) {
+
+    }
+    return result;
+}
+
+template<class T>
+void Graph<T>::sortRelativeToDistQuick(T info, std::vector<T> &sortedNodes, int ii, int jj) {
+    // Using quick sort
+    if(jj - ii < 10) {
+        sortRelativeToDistInsertion(info, sortedNodes);
+    }
+    int i, j;
+
+    if(i < 0) {
+        i = 0; j = sortedNodes.size()-1;
+    } else {
+        i = ii, j = jj-1;
+    }
+
+    int m = dist[sortedNodes[(i + j)/2]][info];
+
+    while( true ) {
+        while( dist[sortedNodes[i]][info] < m ) {
+            i++;
+        }
+        while( dist[sortedNodes[j]][info] > m ) {
+            j++;
+        }
+
+        if( i < j ) {
+            int aux = sortedNodes[i];
+            sortedNodes[i] = sortedNodes[j];
+            sortedNodes[j] = sortedNodes[i];
+        } else {
+            break;
+        }
+
+    }
+    sortRelativeToDistQuick(info, sortedNodes, ii, i-1);
+    sortRelativeToDistQuick(info, sortedNodes, i+1, jj);
+
+}
+
+template<class T>
+const vector<std::vector<double>> &Graph<T>::getDist() const {
+    return dist;
+}
+
+template<class T>
+void Graph<T>::addBiEdge(const T &source, const T &dest, double weight) {
+    addUniEdge(source, dest, weight);
+    addUniEdge(dest, source, weight);
+}
+
+template<class T>
+void Graph<T>::printDist() const {
+    for(int i = 0; i < dist.size(); i++) {
+        for(int j = 0; j < dist[i].size(); j++){
+            if(dist[i][j] > 100)
+                cout << i+1 << " -> " << j+1 << " - dist: INF" << "\t";
+            else
+                cout << i+1 << " -> " << j+1 << " - dist: " << dist[i][j] << "\t";
+        }
+        cout << endl;
+    }
+}
+
+template<class T>
+void Graph<T>::sortRelativeToDistInsertion(T info, vector<T> &sortedNodes) {
+    for(int i = 1; i < sortedNodes.size(); i++) {
+        T comp = dist[sortedNodes[i]][info];
+        int j;
+        for(j = i; j > 0 && comp < dist[sortedNodes[j-1]][info]; j--) {
+            sortedNodes[j] = sortedNodes[j-1];
+        }
+        sortedNodes[j] = comp;
+    }
 }
 
 #endif //PROJ_GRAPH_H
