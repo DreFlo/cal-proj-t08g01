@@ -12,9 +12,26 @@ class Vehicle {
     vector<MealBasket> meals;
     vehicle_type type;
     unsigned int cap;
+    unsigned int used;
+public:
+    unsigned int getUsed() const;
+
 public:
     explicit Vehicle();
-    int getFive();
+
+    const vector<MealBasket> &getMeals() const;
+
+    void setMeals(const vector<MealBasket> &meals);
+
+    vehicle_type getType() const;
+
+    void setType(vehicle_type type);
+
+    unsigned int getCap() const;
+
+    void setCap(unsigned int cap);
+
+    void addMeal(const MealBasket& meal);
 };
 
 

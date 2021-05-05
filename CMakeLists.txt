@@ -3,4 +3,4 @@ project(proj)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(proj src/MealBasket.cpp src/MealBasket.h src/Vehicle.cpp src/Vehicle.h src/Graph.h src/main.cpp )
+add_executable(proj src/MealBasket.cpp src/MealBasket.h src/Vehicle.cpp src/Vehicle.h src/Graph.h src/main.cpp src/ProblemGraph.cpp src/ProblemGraph.h)

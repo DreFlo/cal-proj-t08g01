@@ -42,3 +42,7 @@ string MealBasket::getClientName() const {
 Address MealBasket::getAddress() const {
     return this->destAddress;
 }
+
+bool MealBasket::operator<(const MealBasket &rhs) const {
+    return packageNumber < rhs.packageNumber;
+}

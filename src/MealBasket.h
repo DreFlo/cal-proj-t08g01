@@ -27,6 +27,7 @@ public:
     unsigned int getInvoiceNumber() const;
     std::string getClientName() const;
     Address getAddress() const;
+    bool operator<(const MealBasket &rhs) const;
 };
 
 
