@@ -19,7 +19,7 @@ private:
     bool visited;
     bool processing;
     int indegree;
-    bool hidden;//if this node is transversable
+    bool hidden;//if this node is traversable
     size_t posAtVec;//saves the position of the node in the graph's nodeSet
 
     /**
