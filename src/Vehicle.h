@@ -14,9 +14,6 @@ class Vehicle {
     unsigned int cap;
     unsigned int used;
 public:
-    unsigned int getUsed() const;
-
-public:
     explicit Vehicle();
 
     const vector<MealBasket> &getMeals() const;
@@ -32,6 +29,10 @@ public:
     void setCap(unsigned int cap);
 
     void addMeal(const MealBasket& meal);
+
+    unsigned int getUsed() const;
+
+    bool operator<(const Vehicle &rhs) const;
 };
 
 
