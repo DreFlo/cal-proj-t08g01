@@ -26,7 +26,7 @@ int main() {
     myGraph.sortRelativeToDistQuick(0, vec);
 
     for(auto i: vec) {
-        cout << i << "\t";
+        cout << i+1 << "\t";
     }
     cout << endl;
     return 0;

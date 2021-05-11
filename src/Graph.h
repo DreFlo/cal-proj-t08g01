@@ -1,8 +1,10 @@
 #ifndef PROJ_GRAPH_H
 #define PROJ_GRAPH_H
 
+#include <algorithm>
 #include <vector>
 #include <climits>
+#include <iostream>
 #include <limits>
 
 using namespace std;
@@ -63,11 +65,7 @@ class Graph {
 private:
     std::vector<Node<T> *> nodeSet;  //node set
     std::vector<std::vector<double>> dist;
-public:
-    const vector<std::vector<double>> &getDist() const;
-
-private:
-//weights
+    //weights
     std::vector<std::vector<int>> next;//to reconstruct the path after running the algorithm
 
     Node<T> *findNode(const T &contents) const;
@@ -81,6 +79,8 @@ private:
      */
     void dfs(const T &source);
 public:
+
+    const vector<std::vector<double>> &getDist() const;
     /**
      * @return Number of nodes in the graph
      */
@@ -382,25 +382,34 @@ Node<T> *Graph<T>::operator[](int n) {
 template<class T>
 std::vector<T> Graph<T>::getNearestNeighbour(T info) {
 
-    std::vector<T> sortedVertices;
+    std::vector<T> sortedNodes;
 
     for(Node<T>* node: nodeSet)
         if(node->info != info)
-            sortedVertices.push_back(node->info);
+            sortedNodes.push_back(node->info);
 
 
 
     std::vector<T> result;
     result.push_back(info);
 
-    while(!sortedVertices.empty()) {
-
+    while(!sortedNodes.empty()) {
+        sort(sortedNodes.begin(), sortedNodes.end(),
+             [info, dist = getDist()](const T& t1, const T& t2) -> bool{
+                 return dist[t1][info] < dist[t2][info];
+             });
     }
     return result;
 }
 
+
 template<class T>
 void Graph<T>::sortRelativeToDistQuick(T info, std::vector<T> &sortedNodes, int ii, int jj) {
+    sort(sortedNodes.begin(), sortedNodes.end(),
+         [info, dist = getDist()](const T& t1, const T& t2) -> bool{
+             return dist[t1][info] < dist[t2][info];
+         });
+    /*
     // Using quick sort
     if(jj - ii < 10) {
         sortRelativeToDistInsertion(info, sortedNodes);
@@ -434,7 +443,7 @@ void Graph<T>::sortRelativeToDistQuick(T info, std::vector<T> &sortedNodes, int 
     }
     sortRelativeToDistQuick(info, sortedNodes, ii, i-1);
     sortRelativeToDistQuick(info, sortedNodes, i+1, jj);
-
+    */
 }
 
 template<class T>
