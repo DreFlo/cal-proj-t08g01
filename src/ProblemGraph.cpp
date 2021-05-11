@@ -48,7 +48,7 @@ void ProblemGraph::addDestination(Node<type> *destination) {
 void ProblemGraph::assignOrdersToVehicles() {
     // First Fit Decreasing
     sort(vehicles.begin(), vehicles.end());
-    sort(orders.begin(), orders.end(), greater<>());
+    sort(orders.begin(), orders.end(), greater<MealBasket>());
     for (const MealBasket& order : orders) {
         for (Vehicle vehicle : vehicles) {
             if (vehicle.getUsed() + order.getPackageNumber() <= vehicle.getCap()) {

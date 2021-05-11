@@ -46,3 +46,16 @@ Address MealBasket::getAddress() const {
 bool MealBasket::operator<(const MealBasket &rhs) const {
     return packageNumber < rhs.packageNumber;
 }
+
+bool MealBasket::operator>(const MealBasket &rhs) const {
+    return rhs < *this;
+}
+
+bool MealBasket::operator<=(const MealBasket &rhs) const {
+    return !(rhs < *this);
+}
+
+bool MealBasket::operator>=(const MealBasket &rhs) const {
+    return !(*this < rhs);
+}
+
