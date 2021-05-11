@@ -269,8 +269,8 @@ void Graph<T>::removeUnnecessaryEdges(const T &source){
     resetVisited();
     dfs(source);
     for(auto node : nodeSet){
-        if (!node->visited){
-            for(auto edge : node->connections){
+        if (!(node->visited)){
+            for(auto &edge : node->connections){
                 edge.weight = DOUBLE_MAX;
             }
         }
@@ -284,7 +284,7 @@ void Graph<T>::dfs(const T &source) {
 
     for (auto edge : node->connections) {
         if (!(edge.dest->visited)) {
-            dfs(source);
+            dfs(edge.dest->contents);
         }
     }
 }
