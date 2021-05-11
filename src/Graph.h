@@ -233,7 +233,9 @@ template<class T>
 bool Graph<T>::addNode(const T &contents) {
     //if node doesn't exist add it and return true
     if (findNode(contents) == nullptr) {
-        nodeSet.push_back(new Node<T>(contents));
+        auto * node = new Node<T>(contents);
+        node->posAtVec = nodeSet.size();
+        nodeSet.push_back(node);
         return true;
     }
     return false;
