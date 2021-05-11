@@ -36,3 +36,7 @@ void Vehicle::addMeal(const MealBasket& meal) {
 unsigned int Vehicle::getUsed() const {
     return used;
 }
+
+bool Vehicle::operator<(const Vehicle &rhs) const {
+    return cap < rhs.cap;
+}
