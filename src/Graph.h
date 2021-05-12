@@ -6,6 +6,10 @@
 #include <climits>
 #include <iostream>
 #include <limits>
+#include <fstream>
+#include <regex>
+#include <string>
+#include <math.h>
 
 using namespace std;
 
@@ -26,6 +30,7 @@ private:
     int indegree;
     bool hidden;//if this node is traversable
     size_t posAtVec;//saves the position of the node in the graph's nodeSet
+    pair<long double, long double> position; //position in terms of x and y
 
     /**
      * @brief Adds a new edge to the node
@@ -46,6 +51,7 @@ public:
 
     void setContents(T contents);
     vector<Edge<T>> getConnections();
+    pair<long double, long double> getPosition();
 };
 
 template <class T>
@@ -58,6 +64,7 @@ public:
     friend class Graph<T>;
     friend class Node<T>;
     double getWeight();
+    Node<T>* getDest();
 };
 
 template <class T>
@@ -165,6 +172,11 @@ public:
     std::vector<T> getNearestNeighbour(T info);
 
     void printDist() const;
+
+    void readGraphFromFile(string node_file, string edge_file);
+    void readNodesFromFile(string file);
+    void readEdgesFromFile(string file);
+    void addNode(T &contents, pair<double, double> position);
 };
 
 template<class T>
@@ -197,6 +209,11 @@ void Node<T>::setContents(T contents) {
     this->contents = contents;
 }
 
+template <class T>
+pair<long double, long double> Node<T>::getPosition(){
+    return this->position;
+}
+
 template<class T>
 vector<Edge<T>> Node<T>::getConnections() {
     return connections;
@@ -211,6 +228,11 @@ Edge<T>::Edge(Node<T> *dest, double weight) {
 template<class T>
 double Edge<T>::getWeight(){
     return weight;
+}
+
+template<class T>
+Node<T>* Edge<T>::getDest() {
+    return this->dest;
 }
 
 template<class T>
@@ -482,6 +504,82 @@ void Graph<T>::sortRelativeToDistInsertion(T info, vector<T> &sortedNodes) {
         }
         sortedNodes[j] = comp;
     }
+}
+
+template<class T>
+void Graph<T>::readEdgesFromFile(string file) {
+    fstream node_file;
+    string line;
+    vector<Node<T>*> nodes;
+
+    node_file.open(file);
+    std::getline(node_file, line);
+
+    string comma = ",";
+    size_t pos;
+    while(std::getline(node_file, line)){
+        string temp;
+        T source, dest;
+        int pos;
+
+        line = line.substr(1, line.length() - 2);
+
+        pos = line.find(comma);
+        temp = line.substr(0, pos);
+        source = stoi(temp);
+        line.erase(0, pos + 1);
+
+        dest = stoi(line);
+
+        auto src = findNode(source);
+        auto dst = findNode(dest);
+
+        pair<long double, long double> posSrc, posDst;
+        posSrc = src->getPosition();
+        posDst = dst->getPosition();
+
+        long double weight = sqrt(pow(posSrc.first - posDst.first, 2) + pow(posSrc.second - posDst.second, 2));
+
+        src->addEdge(dst, weight);
+    }
+}
+
+template <class T>
+void Graph<T>::readNodesFromFile(string file) {
+    fstream node_file;
+    string line;
+    vector<Node<T>*> nodes;
+
+    node_file.open(file);
+    getline(node_file, line);
+
+    string comma = ",";
+    size_t pos;
+    while(std::getline(node_file, line)){
+        string temp;
+        T info;
+        pair<long double, long double> position;
+        int pos;
+
+        line = line.substr(1, line.length() - 2);
+
+        pos = line.find(comma);
+        temp = line.substr(0, pos);
+        info = stoi(temp);
+        line.erase(0, pos + 1);
+
+        pos = line.find(comma);
+        temp = line.substr(0, pos);
+        position.first = stold(temp);
+        line.erase(0, pos + 1);
+
+        position.second = stold(line);
+
+        Node<T> *node = new Node<T>(info);
+        node->position = position;
+        nodes.push_back(node);
+    }
+    this->nodeSet = nodes;
 }
 
 #endif //PROJ_GRAPH_H
