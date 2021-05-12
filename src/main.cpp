@@ -18,16 +18,12 @@ int main() {
     myGraph.addBiEdge(4, 6, 2);
     myGraph.addBiEdge(5, 6, 3);
 
-    std::vector<int> vec = {1, 2, 3, 4, 5};
     myGraph.floydWarshallShortestPath();
+    auto result = myGraph.getNearestNeighbour(1);
 
-    myGraph.printDist();
-
-    myGraph.sortRelativeToDistQuick(0, vec);
-
-    for(auto i: vec) {
-        cout << i+1 << "\t";
+    for(auto i: result) {
+        cout << i << endl;
     }
-    cout << endl;
+
     return 0;
 }

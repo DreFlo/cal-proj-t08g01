@@ -383,24 +383,31 @@ Node<T> *Graph<T>::operator[](int n) {
 
 template<class T>
 std::vector<T> Graph<T>::getNearestNeighbour(T info) {
+    // Working
 
     std::vector<T> sortedNodes;
 
     for(Node<T>* node: nodeSet)
-        if(node->info != info)
-            sortedNodes.push_back(node->info);
-
-
+        if(node->contents != info)
+            sortedNodes.push_back(node->contents);
 
     std::vector<T> result;
     result.push_back(info);
 
     while(!sortedNodes.empty()) {
+        // Sorted relative to dist to info
         sort(sortedNodes.begin(), sortedNodes.end(),
-             [info, dist = getDist()](const T& t1, const T& t2) -> bool{
-                 return dist[t1][info] < dist[t2][info];
+             [info, dist = getDist(), this](const T& t1, const T& t2) -> bool{
+                 return dist[findNode(t1)->posAtVec][findNode(info)->posAtVec]
+                        < dist[findNode(t2)->posAtVec][findNode(info)->posAtVec];
              });
+
+        result.push_back(info = sortedNodes[0]);
+        sortedNodes.erase(sortedNodes.begin());
     }
+
+    result.push_back(result[0]);
+
     return result;
 }
 
