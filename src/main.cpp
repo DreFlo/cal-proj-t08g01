@@ -10,7 +10,6 @@ int main() {
 
     for(int i = 1; i < 7; i++)
         myGraph.addNode(i);
-
     myGraph.addBiEdge(1, 2, 3);
     myGraph.addBiEdge(1, 3, 2);
     myGraph.addBiEdge(2, 5, 4);
