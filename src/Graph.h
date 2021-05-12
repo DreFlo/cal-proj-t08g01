@@ -10,6 +10,7 @@
 #include <regex>
 #include <string>
 #include <math.h>
+#include <stack>
 
 using namespace std;
 
@@ -25,6 +26,7 @@ private:
     T contents;
     //node contents
     std::vector<Edge<T>> connections;    //edges leaving from the node
+    std::vector<Edge<T>> transposeConnections;
     bool visited;
     bool processing;
     int indegree;
@@ -44,6 +46,8 @@ private:
      * @return true if edge existed and was removed, false otherwise
      */
     bool removeEdgeTo(Node<T> *dest);
+
+    void addTransposeEdge(Node<T> *dest, double weight);
 public:
     explicit Node(T contents);
     friend class Graph<T>;
@@ -70,7 +74,9 @@ public:
 template <class T>
 class Graph {
 private:
-    std::vector<Node<T> *> nodeSet;  //node set
+    stack<Node<T> *> nodeStack;
+    std::vector<Node<T> *> nodeSet;
+    //node set
     std::vector<std::vector<double>> dist;
     //weights
     std::vector<std::vector<int>> next;//to reconstruct the path after running the algorithm
@@ -82,11 +88,14 @@ private:
     void resetVisited();
     /**
      * @brief Depth-first search on graph
-     * @param source Node to start dfs in
+     * @param source Node to start DFS in
      */
-    void dfs(const T &source);
-public:
+    void DFS(const T &source);
 
+    void SCCVisit(Node<T> * src);
+
+    vector<Node<T> *> transposeDFS(const T &src);
+public:
     const vector<std::vector<double>> &getDist() const;
     /**
      * @return Number of nodes in the graph
@@ -177,6 +186,11 @@ public:
     void readNodesFromFile(string file);
     void readEdgesFromFile(string file);
     void addNode(T &contents, pair<double, double> position);
+    vector<vector<Node<T> *>> getSCCs();
+
+    vector<Node<T> *> getLargestSCC();
+
+    void setNodeSet(const vector<Node<T> *> &nodeSet);
 };
 
 template<class T>
@@ -217,6 +231,11 @@ pair<long double, long double> Node<T>::getPosition(){
 template<class T>
 vector<Edge<T>> Node<T>::getConnections() {
     return connections;
+}
+
+template<class T>
+void Node<T>::addTransposeEdge(Node<T> *dest, double weight) {
+    transposeConnections.push_back(Edge<T>(dest, weight));
 }
 
 template<class T>
@@ -287,6 +306,7 @@ bool Graph<T>::addUniEdge(const T &source, const T &dest, double weight) {
     Node<T> *sourceTargetNode, *destTargetNode;
     if ((sourceTargetNode = findNode(source)) != nullptr && (destTargetNode = findNode(dest)) != nullptr) {
         sourceTargetNode->addEdge(destTargetNode, weight);
+        destTargetNode->addTransposeEdge(sourceTargetNode, weight);
         return true;
     }
     return false;
@@ -309,7 +329,7 @@ vector<Node<T>*> Graph<T>::getNodeSet() const {
 template<class T>
 void Graph<T>::removeUnnecessaryEdges(const T &source){
     resetVisited();
-    dfs(source);
+    DFS(source);
     for(auto node : nodeSet){
         if (!(node->visited)){
             for(auto &edge : node->connections){
@@ -320,15 +340,13 @@ void Graph<T>::removeUnnecessaryEdges(const T &source){
 }
 
 template<class T>
-void Graph<T>::dfs(const T &source) {
-    auto node = findNode(source);
+void Graph<T>::DFS(const T &source) {
+    Node<T> * node = findNode(source);
     node->visited = true;
 
-    for (auto edge : node->connections) {
-        if (!(edge.dest->visited)) {
-            dfs(edge.dest->contents);
-        }
-    }
+    for (auto i = node->connections.begin(); i != node->connections.end(); i++)
+        if (!i->dest->visited)
+            DFS(i->contents);
 }
 
 template<class T>
@@ -589,4 +607,67 @@ void Graph<T>::readNodesFromFile(string file) {
     this->nodeSet = nodes;
 }
 
+template<class T>
+vector<vector<Node<T> *>> Graph<T>::getSCCs() {
+    vector<vector<Node<T> *>> res;
+
+    while(!nodeStack.empty()) nodeStack.pop();
+
+    for (auto node : nodeSet) node->visited = false;
+
+    for (auto node : nodeSet) if (!node->visited) SCCVisit(node);
+
+    for (auto node : nodeSet) node->visited = false;
+
+    while (!nodeStack.empty()) {
+        Node<T> * node = nodeStack.top();
+        nodeStack.pop();
+
+        if (!node->visited) {
+            res.push_back(transposeDFS(node->contents));
+        }
+    }
+
+    return res;
+}
+
+template<class T>
+void Graph<T>::SCCVisit(Node<T> * src) {
+    src->visited = true;
+
+    for (auto edge : src->connections)
+        if (!edge.dest->visited)
+            SCCVisit(edge.dest);
+
+    nodeStack.push(src);
+}
+
+template<class T>
+void Graph<T>::setNodeSet(const vector<Node<T> *> &nodeSet) {
+    Graph::nodeSet = nodeSet;
+}
+
+template<class T>
+vector<Node<T> *> Graph<T>::transposeDFS(const T &src) {
+    vector<Node<T> * > res;
+    Node<T> * node = findNode(src);
+    res.push_back(node);
+    node->visited = true;
+
+    for (auto i = node->transposeConnections.begin(); i != node->transposeConnections.end(); i++)
+        if (!i->dest->visited) {
+            vector<Node<T> * > temp = transposeDFS(i->dest->contents);
+            res.insert(res.end(), temp.begin(), temp.end());
+        }
+
+    return res;
+}
+
+template<class T>
+vector<Node<T> *> Graph<T>::getLargestSCC() {
+    auto SCCs = getSCCs();
+    return *max_element(SCCs.begin(), SCCs.end(), [](const vector<Node<T> *> &v1, const vector<Node<T> *> &v2) -> bool{
+            return v1.size() < v2.size();}
+            );
+}
 #endif //PROJ_GRAPH_H
