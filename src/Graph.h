@@ -95,7 +95,10 @@ private:
     void SCCVisit(Node<T> * src);
 
     vector<Node<T> *> transposeDFS(const T &src);
+
+    explicit Graph(vector<Node<T> *> nodes);
 public:
+    Graph();
     const vector<std::vector<double>> &getDist() const;
     /**
      * @return Number of nodes in the graph
@@ -188,7 +191,7 @@ public:
     void addNode(T &contents, pair<double, double> position);
     vector<vector<Node<T> *>> getSCCs();
 
-    vector<Node<T> *> getLargestSCC();
+    Graph<T> * getLargestSCC();
 
     void setNodeSet(const vector<Node<T> *> &nodeSet);
 };
@@ -664,10 +667,20 @@ vector<Node<T> *> Graph<T>::transposeDFS(const T &src) {
 }
 
 template<class T>
-vector<Node<T> *> Graph<T>::getLargestSCC() {
-    auto SCCs = getSCCs();
-    return *max_element(SCCs.begin(), SCCs.end(), [](const vector<Node<T> *> &v1, const vector<Node<T> *> &v2) -> bool{
+Graph<T> * Graph<T>::getLargestSCC() {
+    vector<vector<Node<T> *>> SCCs = getSCCs();
+    vector<Node<T> *> nodes =  *max_element(SCCs.begin(), SCCs.end(), [](const vector<Node<T> *> &v1, const vector<Node<T> *> &v2) -> bool{
             return v1.size() < v2.size();}
             );
+    return new Graph<T>(nodes);
 }
+
+template<class T>
+Graph<T>::Graph(vector<Node<T> *> nodes) {
+    Graph<T>::nodeSet = nodes;
+}
+
+template<class T>
+Graph<T>::Graph() = default;
+
 #endif //PROJ_GRAPH_H
