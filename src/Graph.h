@@ -349,7 +349,7 @@ void Graph<T>::DFS(const T &source) {
 
     for (auto i = node->connections.begin(); i != node->connections.end(); i++)
         if (!i->dest->visited)
-            DFS(i->contents);
+            DFS(i->dest->contents);
 }
 
 template<class T>
@@ -577,6 +577,7 @@ void Graph<T>::readNodesFromFile(string file) {
     fstream node_file;
     string line;
     vector<Node<T>*> nodes;
+    size_t posAtVec = 0;
 
     node_file.open(file);
     getline(node_file, line);
@@ -605,7 +606,10 @@ void Graph<T>::readNodesFromFile(string file) {
 
         Node<T> *node = new Node<T>(info);
         node->position = position;
+        node->posAtVec = posAtVec;
         nodes.push_back(node);
+
+        posAtVec++;
     }
     this->nodeSet = nodes;
 }

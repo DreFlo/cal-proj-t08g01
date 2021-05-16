@@ -16,17 +16,17 @@ private:
     unsigned int packageNumber;
     unsigned int invoiceNumber;
     std::string clientName;
-    Address destAddress;
+    std::pair<long double, long double> destAddress;
 public:
-    MealBasket(unsigned int packageNumber, unsigned int invoiceNumber, std::string clientName, Address address);
+    MealBasket(unsigned int packageNumber, unsigned int invoiceNumber, std::string clientName, std::pair<long double, long double> address);
     void setPackageNumber(unsigned int packageNumber);
     void setInvoiceNumber(unsigned int invoiceNumber);
     void setClientName(std::string clientName);
-    void setAddress(Address address);
+    void setAddress(std::pair<long double, long double> address);
     unsigned int getPackageNumber() const;
     unsigned int getInvoiceNumber() const;
     std::string getClientName() const;
-    Address getAddress() const;
+    std::pair<long double, long double> getAddress() const;
 
     bool operator<(const MealBasket &rhs) const;
 

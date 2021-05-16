@@ -30,18 +30,36 @@ void ProblemGraph::setDestinations(const vector<Node<type> *> &destinations) {
     ProblemGraph::destinations = destinations;
 }
 
+const Node<type>* ProblemGraph::getHQ() const {
+    return hq;
+}
+
+void ProblemGraph::setHQ(pair<long double, long double> address) {
+    vector<Node<type> * > nodes = processedGraph->getNodeSet();
+    for(auto node : nodes){
+        if(node->getPosition() == address){
+            hq = node;
+            break;
+        }
+    }
+}
+
 void ProblemGraph::addOrder(const MealBasket& mealBasket) {
     orders.push_back(mealBasket);
+    this->addDestination(mealBasket.getAddress());
 }
 
 void ProblemGraph::addVehicle(const Vehicle& vehicle) {
     vehicles.push_back(vehicle);
 }
 
-void ProblemGraph::addDestination(Node<type> *destination) {
+void ProblemGraph::addDestination(pair<long double, long double> destination) {
     vector<Node<type> * > nodes = processedGraph->getNodeSet();
-    if (find(nodes.begin(), nodes.end(), destination) != nodes.end()) {
-        destinations.push_back(destination);
+    for(auto node : nodes){
+        if(node->getPosition() == destination){
+            destinations.push_back(node);
+            break;
+        }
     }
 }
 

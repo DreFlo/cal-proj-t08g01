@@ -18,6 +18,7 @@ public:
     vector<MealBasket> orders;
     //IDK
     vector<Node<type> * > destinations;
+    Node<type>* hq;
 
     explicit ProblemGraph(Graph<type> * graph);
 
@@ -33,9 +34,13 @@ public:
 
     void setDestinations(const vector<Node<type> *> &destinations);
 
+    const Node<type>* getHQ() const;
+
+    void setHQ(pair<long double, long double> address);
+
     void addOrder(const MealBasket& mealBasket);
 
-    void addDestination(Node<type> * destination);
+    void addDestination(pair<long double, long double> destination);
 
     void addVehicle(const Vehicle& vehicle);
 

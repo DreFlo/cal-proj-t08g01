@@ -9,30 +9,21 @@ using namespace std;
 int main() {
     Graph<int> myGraph;
 
-    myGraph.readNodesFromFile("GridGraphs/4x4/nodes.txt");
-    myGraph.readEdgesFromFile("GridGraphs/4x4/edges.txt");
+    myGraph.readNodesFromFile("GridGraphs/16x16/nodes.txt");
+    myGraph.readEdgesFromFile("GridGraphs/16x16/edges.txt");
 
-    vector<Node<int>*> nodes = myGraph.getNodeSet();
+    myGraph.removeUnnecessaryEdges(1);
 
-    /*
-    for(int i = 1; i < 7; i++)
-        myGraph.addNode(i);
-    myGraph.addBiEdge(1, 2, 3);
-    myGraph.addBiEdge(1, 3, 2);
-    myGraph.addBiEdge(2, 5, 4);
-    myGraph.addBiEdge(2, 4, 3);
-    myGraph.addBiEdge(2, 3, 1);
-    myGraph.addBiEdge(3, 5, 2);
-    myGraph.addBiEdge(4, 6, 2);
-    myGraph.addBiEdge(5, 6, 3);
+    ProblemGraph problemGraph(&myGraph);
 
-    myGraph.floydWarshallShortestPath();
-    auto result = myGraph.getNearestNeighbour(1);
+    problemGraph.addVehicle(Vehicle());
 
-    for(auto i: result) {
-        cout << i << endl;
-    }
-    */
+    problemGraph.addOrder(MealBasket(10, 0, "Client1",
+                                     pair<long double, long double>(0, 37)));
+    problemGraph.addOrder(MealBasket(13, 1, "Client1",
+                                     pair<long double, long double>(0, 222)));
+
+    problemGraph.assignOrdersToVehicles();
 
     return 0;
 }
