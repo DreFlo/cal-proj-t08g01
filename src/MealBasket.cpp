@@ -1,7 +1,3 @@
-//
-// Created by andre on 3/20/2021.
-//
-
 #include "MealBasket.h"
 
 #include <utility>

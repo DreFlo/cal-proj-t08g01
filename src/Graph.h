@@ -9,8 +9,10 @@
 #include <fstream>
 #include <regex>
 #include <string>
-#include <math.h>
+#include <cmath>
 #include <stack>
+
+#include "Vehicle.h"
 
 using namespace std;
 
@@ -176,11 +178,7 @@ public:
     Node<T> * operator[](int n);
 
 
-    // TODO: comment
-    void sortRelativeToDistQuick(T info, std::vector<T> &sortedNodes, int i = -1, int j = 100);
-    void sortRelativeToDistInsertion(T info, std::vector<T> &sortedNodes);
-
-    std::vector<T> getNearestNeighbour(T info);
+    std::vector<T> getNearestNeighbourPath(T info, const Vehicle& vehicle);
 
     void printDist() const;
 
@@ -196,6 +194,8 @@ public:
     void setNodeSet(const vector<Node<T> *> &nodeSet);
 
     Node<T> *findNode(const T &contents) const;
+    Node<T> *findNode(const std::pair<long double, long double> &pair) const;
+
 };
 
 template<class T>
@@ -427,17 +427,18 @@ Node<T> *Graph<T>::operator[](int n) {
 }
 
 template<class T>
-std::vector<T> Graph<T>::getNearestNeighbour(T info) {
+std::vector<T> Graph<T>::getNearestNeighbourPath(T info, const Vehicle& vehicle) {
     // Working
 
+
     std::vector<T> sortedNodes;
-
-    for(Node<T>* node: nodeSet)
-        if(node->contents != info)
-            sortedNodes.push_back(node->contents);
-
     std::vector<T> result;
+
     result.push_back(info);
+
+    for(MealBasket meal: vehicle.getMeals()) {
+        sortedNodes.push_back(findNode(meal.getAddress())->contents);
+    }
 
     while(!sortedNodes.empty()) {
         // Sorted relative to dist to info
@@ -456,49 +457,6 @@ std::vector<T> Graph<T>::getNearestNeighbour(T info) {
     return result;
 }
 
-
-template<class T>
-void Graph<T>::sortRelativeToDistQuick(T info, std::vector<T> &sortedNodes, int ii, int jj) {
-    sort(sortedNodes.begin(), sortedNodes.end(),
-         [info, dist = getDist()](const T& t1, const T& t2) -> bool{
-             return dist[t1][info] < dist[t2][info];
-         });
-    /*
-    // Using quick sort
-    if(jj - ii < 10) {
-        sortRelativeToDistInsertion(info, sortedNodes);
-    }
-    int i, j;
-
-    if(i < 0) {
-        i = 0; j = sortedNodes.size()-1;
-    } else {
-        i = ii, j = jj-1;
-    }
-
-    int m = dist[sortedNodes[(i + j)/2]][info];
-
-    while( true ) {
-        while( dist[sortedNodes[i]][info] < m ) {
-            i++;
-        }
-        while( dist[sortedNodes[j]][info] > m ) {
-            j++;
-        }
-
-        if( i < j ) {
-            int aux = sortedNodes[i];
-            sortedNodes[i] = sortedNodes[j];
-            sortedNodes[j] = sortedNodes[i];
-        } else {
-            break;
-        }
-
-    }
-    sortRelativeToDistQuick(info, sortedNodes, ii, i-1);
-    sortRelativeToDistQuick(info, sortedNodes, i+1, jj);
-    */
-}
 
 template<class T>
 const vector<std::vector<double>> &Graph<T>::getDist() const {
@@ -521,18 +479,6 @@ void Graph<T>::printDist() const {
                 cout << i+1 << " -> " << j+1 << " - dist: " << dist[i][j] << "\t";
         }
         cout << endl;
-    }
-}
-
-template<class T>
-void Graph<T>::sortRelativeToDistInsertion(T info, vector<T> &sortedNodes) {
-    for(int i = 1; i < sortedNodes.size(); i++) {
-        T comp = dist[sortedNodes[i]][info];
-        int j;
-        for(j = i; j > 0 && comp < dist[sortedNodes[j-1]][info]; j--) {
-            sortedNodes[j] = sortedNodes[j-1];
-        }
-        sortedNodes[j] = comp;
     }
 }
 
@@ -723,6 +669,11 @@ void Graph<T>::readEdgesFromFileAsBi(string file) {
 
         addBiEdge(source, dest, weight);
     }
+}
+
+template<class T>
+Node<T> *Graph<T>::findNode(const std::pair<long double, long double> &pair) const {
+    for(auto node: nodeSet) if(node->getPosition() == pair) return node;
 }
 
 template<class T>

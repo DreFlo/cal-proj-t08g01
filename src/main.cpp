@@ -1,8 +1,6 @@
 #include <iostream>
 #include "Graph.h"
-#include "Vehicle.h"
 #include "ProblemGraph.h"
-#include <string>
 
 using namespace std;
 
@@ -29,8 +27,8 @@ int main() {
 
     problemGraph.assignOrdersToVehicles();
 
-    for (auto idk : problemGraph.startGraph->getNearestNeighbour(0)) {
-        cout << idk << endl;
+    for (auto idk : problemGraph.startGraph->getNearestNeighbourPath(0, problemGraph.vehicles[0])) {
+        cout << problemGraph.startGraph->findNode(idk)->getPosition().second << endl;
     }
 
     return 0;

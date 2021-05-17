@@ -1,7 +1,3 @@
-//
-// Created by andre on 3/20/2021.
-//
-
 #ifndef PROJ_MEALBASKET_H
 #define PROJ_MEALBASKET_H
 
