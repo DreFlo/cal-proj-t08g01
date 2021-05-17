@@ -1,6 +1,10 @@
 #include "ProblemGraph.h"
 
+#include <cstdlib>
+
 using namespace std;
+
+typedef MealBasket Client;
 
 ProblemGraph::ProblemGraph(Graph<type> *graph):startGraph(graph) {
     processedGraph = graph;
@@ -80,4 +84,13 @@ void ProblemGraph::assignOrdersToVehicles() {
 
 void ProblemGraph::setHQ(int nodePos) {
     ProblemGraph::hq = startGraph->getNodeSet()[nodePos];
+}
+
+void ProblemGraph::createClients(int number) {
+    for(int i = 0; i < number; i++) {
+        Client client;
+        client.setPackageNumber((rand() % 10) + 5);
+        client.setAddress(startGraph->getRandomNode()->getPosition());
+        orders.push_back(client);
+    }
 }

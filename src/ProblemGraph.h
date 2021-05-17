@@ -47,6 +47,8 @@ public:
     void addVehicle(const Vehicle& vehicle);
 
     void assignOrdersToVehicles();
+
+    void createClients(int number = 10);
 };
 
 

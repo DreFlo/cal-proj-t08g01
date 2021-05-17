@@ -3,20 +3,17 @@
 
 #include <iostream>
 
-
-//TODO probs vai ter de ser um classe msm
-typedef std::string Address;
-
 class MealBasket {
 private:
+    static unsigned int counter;
     unsigned int packageNumber;
     unsigned int invoiceNumber;
     std::string clientName;
     std::pair<long double, long double> destAddress;
 public:
-    MealBasket(unsigned int packageNumber, unsigned int invoiceNumber, std::string clientName, std::pair<long double, long double> address);
+    MealBasket();
+    MealBasket(unsigned int packageNumber, std::string clientName, std::pair<long double, long double> address);
     void setPackageNumber(unsigned int packageNumber);
-    void setInvoiceNumber(unsigned int invoiceNumber);
     void setClientName(std::string clientName);
     void setAddress(std::pair<long double, long double> address);
     unsigned int getPackageNumber() const;

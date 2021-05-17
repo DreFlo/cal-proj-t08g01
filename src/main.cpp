@@ -1,10 +1,15 @@
+#include <ctime>
 #include <iostream>
+#include <cstdlib>
+
+
 #include "Graph.h"
 #include "ProblemGraph.h"
 
 using namespace std;
 
 int main() {
+    srand((unsigned int)time(nullptr)); rand();
     Graph<int> myGraph;
 
     myGraph.readNodesFromFile("GridGraphs/16x16/nodes.txt");
@@ -20,15 +25,12 @@ int main() {
 
     problemGraph.addVehicle(Vehicle());
 
-    problemGraph.addOrder(MealBasket(10, 0, "Client1",
-                                     pair<long double, long double>(0, 37)));
-    problemGraph.addOrder(MealBasket(13, 1, "Client2",
-                                     pair<long double, long double>(0, 222)));
+    problemGraph.createClients();
 
     problemGraph.assignOrdersToVehicles();
 
-    for (auto idk : problemGraph.startGraph->getNearestNeighbourPath(0, problemGraph.vehicles[0])) {
-        cout << problemGraph.startGraph->findNode(idk)->getPosition().second << endl;
+    for(auto idk: problemGraph.startGraph->getFloydWarshallPath(problemGraph.startGraph->getNearestNeighbourPath(0, problemGraph.vehicles[0]))) {
+        cout << idk << endl;
     }
 
     return 0;

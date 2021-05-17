@@ -1,22 +1,23 @@
 #include "MealBasket.h"
 
-#include <utility>
+
 
 using namespace std;
 
-MealBasket::MealBasket(unsigned int packageNumber, unsigned int invoiceNumber, string clientName, std::pair<long double, long double> address)
-        : packageNumber(packageNumber), invoiceNumber(invoiceNumber), clientName(std::move(clientName)), destAddress(address) {}
+unsigned int MealBasket::counter = 1;
+
+MealBasket::MealBasket(): invoiceNumber(counter++) {}
+
+MealBasket::MealBasket(unsigned int packageNumber, string clientName, std::pair<long double, long double> address)
+        : packageNumber(packageNumber), invoiceNumber(counter++),  clientName(std::move(clientName)), destAddress(address) {
+}
 
 void MealBasket::setPackageNumber(unsigned int packageNumber) {
     this->packageNumber = packageNumber;
 }
 
-void MealBasket::setInvoiceNumber(unsigned int invoiceNumber) {
-    this->invoiceNumber = invoiceNumber;
-}
-
 void MealBasket::setClientName(string clientName) {
-    this->clientName = clientName;
+    this->clientName = std::move(clientName);
 }
 
 void MealBasket::setAddress(std::pair<long double, long double> address) {

@@ -170,7 +170,7 @@ public:
      * @return vector with path
      */
     std::vector<T> getFloydWarshallPath(const T &source, const T &destination);
-
+    std::vector<T> getFloydWarshallPath(std::vector<T> vector);
     /**
      * Return the Node in nodeSet with index n
      * @return Node in nodeSet with index n
@@ -179,7 +179,6 @@ public:
 
 
     std::vector<T> getNearestNeighbourPath(T info, const Vehicle& vehicle);
-
     void printDist() const;
 
     void readGraphFromFile(string node_file, string edge_file);
@@ -196,6 +195,7 @@ public:
     Node<T> *findNode(const T &contents) const;
     Node<T> *findNode(const std::pair<long double, long double> &pair) const;
 
+    Node<T> *getRandomNode() const;
 };
 
 template<class T>
@@ -411,13 +411,24 @@ vector<T> Graph<T>::getFloydWarshallPath(const T &source, const T &destination) 
     vector<T> result;
     int v = src->posAtVec, w = dest->posAtVec;
 
-    result.push_back(nodeSet[v].info);
+    result.push_back(nodeSet[v]->contents);
     while (v != w) {
         v = next[v][w];
         if (v < 0)
             break;
-        result.push_back(nodeSet[v].info);
+        result.push_back(nodeSet[v]->contents);
     }
+    return result;
+}
+
+template<class T>
+vector<T> Graph<T>::getFloydWarshallPath(vector<T> vector) {
+    std::vector<T> result;
+    for(int i = 0, j = 1; j < vector.size(); i++, j++) {
+        auto temp = getFloydWarshallPath(vector[i], vector[j]);
+        result.insert(result.end(), temp.begin() + 1, temp.end());
+    }
+
     return result;
 }
 
@@ -428,8 +439,6 @@ Node<T> *Graph<T>::operator[](int n) {
 
 template<class T>
 std::vector<T> Graph<T>::getNearestNeighbourPath(T info, const Vehicle& vehicle) {
-    // Working
-
 
     std::vector<T> sortedNodes;
     std::vector<T> result;
@@ -674,7 +683,15 @@ void Graph<T>::readEdgesFromFileAsBi(string file) {
 template<class T>
 Node<T> *Graph<T>::findNode(const std::pair<long double, long double> &pair) const {
     for(auto node: nodeSet) if(node->getPosition() == pair) return node;
+    return nullptr;
 }
+
+template<class T>
+Node<T> *Graph<T>::getRandomNode() const{
+    return nodeSet[rand() % nodeSet.size()];
+}
+
+
 
 template<class T>
 Graph<T>::Graph() = default;
