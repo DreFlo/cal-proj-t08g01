@@ -38,6 +38,8 @@ public:
 
     void setHQ(pair<long double, long double> address);
 
+    void setHQ(int nodePos);
+
     void addOrder(const MealBasket& mealBasket);
 
     void addDestination(pair<long double, long double> destination);

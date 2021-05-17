@@ -81,7 +81,6 @@ private:
     //weights
     std::vector<std::vector<int>> next;//to reconstruct the path after running the algorithm
 
-    Node<T> *findNode(const T &contents) const;
     /**
      * @brief Sets visited to false for all nodes
      */
@@ -188,12 +187,15 @@ public:
     void readGraphFromFile(string node_file, string edge_file);
     void readNodesFromFile(string file);
     void readEdgesFromFile(string file);
+    void readEdgesFromFileAsBi(string file);
     void addNode(T &contents, pair<double, double> position);
     vector<vector<Node<T> *>> getSCCs();
 
     Graph<T> * getLargestSCC();
 
     void setNodeSet(const vector<Node<T> *> &nodeSet);
+
+    Node<T> *findNode(const T &contents) const;
 };
 
 template<class T>
@@ -568,7 +570,7 @@ void Graph<T>::readEdgesFromFile(string file) {
 
         long double weight = sqrt(pow(posSrc.first - posDst.first, 2) + pow(posSrc.second - posDst.second, 2));
 
-        src->addEdge(dst, weight);
+        addUniEdge(source, dest, weight);
     }
 }
 
@@ -682,6 +684,45 @@ Graph<T> * Graph<T>::getLargestSCC() {
 template<class T>
 Graph<T>::Graph(vector<Node<T> *> nodes) {
     Graph<T>::nodeSet = nodes;
+    for (int i = 0; i < nodeSet.size(); i++) nodeSet[i]->posAtVec = i;
+}
+
+template<class T>
+void Graph<T>::readEdgesFromFileAsBi(string file) {
+    fstream node_file;
+    string line;
+    vector<Node<T>*> nodes;
+
+    node_file.open(file);
+    std::getline(node_file, line);
+
+    string comma = ",";
+    size_t pos;
+    while(std::getline(node_file, line)){
+        string temp;
+        T source, dest;
+        int pos;
+
+        line = line.substr(1, line.length() - 2);
+
+        pos = line.find(comma);
+        temp = line.substr(0, pos);
+        source = stoi(temp);
+        line.erase(0, pos + 1);
+
+        dest = stoi(line);
+
+        auto src = findNode(source);
+        auto dst = findNode(dest);
+
+        pair<long double, long double> posSrc, posDst;
+        posSrc = src->getPosition();
+        posDst = dst->getPosition();
+
+        long double weight = sqrt(pow(posSrc.first - posDst.first, 2) + pow(posSrc.second - posDst.second, 2));
+
+        addBiEdge(source, dest, weight);
+    }
 }
 
 template<class T>

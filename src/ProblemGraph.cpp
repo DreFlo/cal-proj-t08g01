@@ -66,9 +66,9 @@ void ProblemGraph::addDestination(pair<long double, long double> destination) {
 void ProblemGraph::assignOrdersToVehicles() {
     // First Fit Decreasing
     sort(vehicles.begin(), vehicles.end());
-    sort(orders.begin(), orders.end(), greater<MealBasket>());
+    sort(orders.begin(), orders.end(), greater<>());
     for (const MealBasket& order : orders) {
-        for (Vehicle vehicle : vehicles) {
+        for (Vehicle& vehicle : vehicles) {
             if (vehicle.getUsed() + order.getPackageNumber() <= vehicle.getCap()) {
                 vehicle.addMeal(order);
                 break;
@@ -76,4 +76,8 @@ void ProblemGraph::assignOrdersToVehicles() {
         }
     }
     orders.clear();
+}
+
+void ProblemGraph::setHQ(int nodePos) {
+    ProblemGraph::hq = startGraph->getNodeSet()[nodePos];
 }

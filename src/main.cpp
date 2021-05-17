@@ -10,20 +10,28 @@ int main() {
     Graph<int> myGraph;
 
     myGraph.readNodesFromFile("GridGraphs/16x16/nodes.txt");
-    myGraph.readEdgesFromFile("GridGraphs/16x16/edges.txt");
+    myGraph.readEdgesFromFileAsBi("GridGraphs/16x16/edges.txt");
 
     myGraph.removeUnnecessaryEdges(1);
 
-    ProblemGraph problemGraph(&myGraph);
+    ProblemGraph problemGraph(myGraph.getLargestSCC());
+
+    problemGraph.startGraph->floydWarshallShortestPath();
+
+    problemGraph.setHQ(0);
 
     problemGraph.addVehicle(Vehicle());
 
     problemGraph.addOrder(MealBasket(10, 0, "Client1",
                                      pair<long double, long double>(0, 37)));
-    problemGraph.addOrder(MealBasket(13, 1, "Client1",
+    problemGraph.addOrder(MealBasket(13, 1, "Client2",
                                      pair<long double, long double>(0, 222)));
 
     problemGraph.assignOrdersToVehicles();
+
+    for (auto idk : problemGraph.startGraph->getNearestNeighbour(0)) {
+        cout << idk << endl;
+    }
 
     return 0;
 }
