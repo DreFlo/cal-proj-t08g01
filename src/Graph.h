@@ -58,6 +58,7 @@ public:
     void setContents(T contents);
     vector<Edge<T>> getConnections();
     pair<long double, long double> getPosition();
+    size_t getPosAtVec() const;
 };
 
 template <class T>
@@ -241,6 +242,11 @@ vector<Edge<T>> Node<T>::getConnections() {
 template<class T>
 void Node<T>::addTransposeEdge(Node<T> *dest, double weight) {
     transposeConnections.push_back(Edge<T>(dest, weight));
+}
+
+template <class T>
+size_t Node<T>::getPosAtVec() const {
+    return posAtVec;
 }
 
 template<class T>
