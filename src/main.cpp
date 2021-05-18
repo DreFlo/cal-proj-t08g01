@@ -41,6 +41,6 @@ int main() {
     for(auto idk: problemGraph.startGraph->getFloydWarshallPath(problemGraph.startGraph->getNearestNeighbourPath(0, problemGraph.vehicles[0]))) {
         cout << idk << endl;
     }
-    
+
     return 0;
 }
