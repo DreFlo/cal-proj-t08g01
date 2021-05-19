@@ -12,7 +12,7 @@
 #include <cmath>
 #include <stack>
 
-#include "Vehicle.h"
+#include "Components/Vehicle.h"
 
 using namespace std;
 
@@ -26,13 +26,9 @@ template <class T>
 class Node {
 private:
     T contents;
-    //node contents
     std::vector<Edge<T>> connections;    //edges leaving from the node
     std::vector<Edge<T>> transposeConnections;
     bool visited;
-    bool processing;
-    int indegree;
-    bool hidden;//if this node is traversable
     size_t posAtVec;//saves the position of the node in the graph's nodeSet
     pair<long double, long double> position; //position in terms of x and y
 
@@ -49,15 +45,22 @@ private:
      */
     bool removeEdgeTo(Node<T> *dest);
 
+    /**
+     * Add edge to transpose connections
+     */
     void addTransposeEdge(Node<T> *dest, double weight);
 public:
     explicit Node(T contents);
     friend class Graph<T>;
+
     T getContents() const;
 
     void setContents(T contents);
+
     vector<Edge<T>> getConnections();
+
     pair<long double, long double> getPosition();
+
     size_t getPosAtVec() const;
 };
 
@@ -77,30 +80,37 @@ public:
 template <class T>
 class Graph {
 private:
-    stack<Node<T> *> nodeStack;
+    // Nodes in the graph
     std::vector<Node<T> *> nodeSet;
-    //node set
+
+    // Floyd-Warshall matrices
     std::vector<std::vector<double>> dist;
-    //weights
-    std::vector<std::vector<int>> next;//to reconstruct the path after running the algorithm
+    std::vector<std::vector<int>> next;
 
     /**
      * @brief Sets visited to false for all nodes
      */
     void resetVisited();
+
     /**
      * @brief Depth-first search on graph
      * @param source Node to start DFS in
      */
     void DFS(Node<T>* node);
 
-    void SCCVisit(Node<T> * src);
+    /**
+     * Helper function for getSCCs()
+     */
+    void SCCVisit(Node<T> *src, stack<Node<T> *> &nodeStack);
 
+    /**
+     * Depth-first search by the transpose edges
+     */
     vector<Node<T> *> transposeDFS(const T &src);
 
     explicit Graph(vector<Node<T> *> nodes);
 public:
-    Graph();
+    Graph() = default;
     const vector<std::vector<double>> &getDist() const;
     /**
      * @return Number of nodes in the graph
@@ -127,9 +137,14 @@ public:
      */
     bool addUniEdge(const T &source, const T &dest, double weight);
 
+    /**
+     * Add unidirectional dge from node pointers.
+     */
     void addUniEdge(Node<T>* source, Node<T>* dest, double weight);
 
-    // TODO: Comment
+    /**
+     * Add bidirectional edge from node contents
+     */
     void addBiEdge(const T &source, const T &dest, double weight);
 
     /**
@@ -139,6 +154,7 @@ public:
      * @return true if edge existed and was removed, false otherwise
      */
     bool removeEdge(const T &source, const T &dest);
+
     std::vector<Node<T>*> getNodeSet() const;
 
     /**
@@ -149,7 +165,6 @@ public:
 
     /**
      * Return the weight value from edge between the node with index i and j
-     * @return
      */
     double edgeCost(int i, int j);
 
@@ -172,35 +187,74 @@ public:
      * @param destination info from the final node
      * @return vector with path
      */
-    std::vector<T> getFloydWarshallPath(const T &source, const T &destination);
-    std::vector<T> getFloydWarshallPath(std::vector<T> vector);
+    std::vector<Node<T> *> getFloydWarshallPath(const T &source, const T &destination);
+
+    /**
+     * Get Floyd Warshall path between consecutive pairs of nodes in argument vector
+     * @return Vector with the contents
+     */
+    std::vector<Node<T> *> getFloydWarshallPath(std::vector<T> vector);
     /**
      * Return the Node in nodeSet with index n
      * @return Node in nodeSet with index n
      */
     Node<T> * operator[](int n);
 
-
     std::vector<T> getNearestNeighbourPath(T info, const Vehicle& vehicle);
+
     void printDist() const;
 
+    /**
+     * Create graph from given node and edge files.
+     */
     void readGraphFromFile(string node_file, string edge_file);
+
+    /**
+     * Read nodes from given file
+     */
     void readNodesFromFile(string file);
+
+    /**
+     * Read edges from given file
+     */
     void readEdgesFromFile(string file);
+
+    /**
+     * Read edges from given file as bi-directional
+     */
     void readEdgesFromFileAsBi(string file);
+
     void addNode(T &contents, pair<double, double> position);
+
+    /**
+     * Get all SCCs in the graph
+     */
     vector<vector<Node<T> *>> getSCCs();
 
+    /**
+     * Get largest SCC in the graph
+     */
     Graph<T> * getLargestSCC();
 
     vector<Node<T> *> AStar(Node<T> * src, Node<T> * dest);
 
     void setNodeSet(const vector<Node<T> *> &nodeSet);
 
+    /**
+     * Get node with given contents
+     */
     Node<T> *findNode(const T &contents) const;
+
+    /**
+     * Get node with given address
+     */
     Node<T> *findNode(const std::pair<long double, long double> &pair) const;
 
+    /**
+     * Get random node from the graph
+     */
     Node<T> *getRandomNode() const;
+
 };
 
 template<class T>
@@ -221,7 +275,7 @@ bool Node<T>::removeEdgeTo(Node<T> *dest) {
 }
 
 template<class T>
-Node<T>::Node(T contents): contents(contents), visited(false), processing(false), indegree(0) {}
+Node<T>::Node(T contents): contents(contents), visited(false) {}
 
 template<class T>
 T Node<T>::getContents() const {
@@ -420,26 +474,26 @@ int Graph<T>::nodePrev(int i, int j) {
 }
 
 template<class T>
-vector<T> Graph<T>::getFloydWarshallPath(const T &source, const T &destination) {
+vector<Node<T> *> Graph<T>::getFloydWarshallPath(const T &source, const T &destination) {
     Node<T>* src = findNode(source);
     Node<T>* dest = findNode(destination);
 
-    vector<T> result;
+    vector<Node<T> *> result;
     int v = src->posAtVec, w = dest->posAtVec;
 
-    result.push_back(nodeSet[v]->contents);
+    result.push_back(nodeSet[v]);
     while (v != w) {
         v = next[v][w];
         if (v < 0)
             break;
-        result.push_back(nodeSet[v]->contents);
+        result.push_back(nodeSet[v]);
     }
     return result;
 }
 
 template<class T>
-vector<T> Graph<T>::getFloydWarshallPath(vector<T> vector) {
-    std::vector<T> result;
+vector<Node<T> *> Graph<T>::getFloydWarshallPath(vector<T> vector) {
+    std::vector<Node<T> *> result;
     for(int i = 0, j = 1; j < vector.size(); i++, j++) {
         auto temp = getFloydWarshallPath(vector[i], vector[j]);
         result.insert(result.end(), temp.begin() + 1, temp.end());
@@ -595,14 +649,15 @@ void Graph<T>::readNodesFromFile(string file) {
 template<class T>
 vector<vector<Node<T> *>> Graph<T>::getSCCs() {
     vector<vector<Node<T> *>> res;
+    stack<Node<T> *> nodeStack;
 
     while(!nodeStack.empty()) nodeStack.pop();
 
-    for (auto node : nodeSet) node->visited = false;
+    resetVisited();
 
-    for (auto node : nodeSet) if (!node->visited) SCCVisit(node);
+    for (auto node : nodeSet) if (!node->visited) SCCVisit(node, nodeStack);
 
-    for (auto node : nodeSet) node->visited = false;
+    resetVisited();
 
     while (!nodeStack.empty()) {
         Node<T> * node = nodeStack.top();
@@ -617,12 +672,12 @@ vector<vector<Node<T> *>> Graph<T>::getSCCs() {
 }
 
 template<class T>
-void Graph<T>::SCCVisit(Node<T> * src) {
+void Graph<T>::SCCVisit(Node<T> * src, stack<Node<T> *> & nodeStack) {
     src->visited = true;
 
     for (auto edge : src->connections)
         if (!edge.dest->visited)
-            SCCVisit(edge.dest);
+            SCCVisit(edge.dest, nodeStack);
 
     nodeStack.push(src);
 }
@@ -651,9 +706,8 @@ vector<Node<T> *> Graph<T>::transposeDFS(const T &src) {
 template<class T>
 Graph<T> * Graph<T>::getLargestSCC() {
     vector<vector<Node<T> *>> SCCs = getSCCs();
-    vector<Node<T> *> nodes =  *max_element(SCCs.begin(), SCCs.end(), [](const vector<Node<T> *> &v1, const vector<Node<T> *> &v2) -> bool{
-            return v1.size() < v2.size();}
-            );
+    vector<Node<T> *> nodes =  *max_element(SCCs.begin(), SCCs.end(),
+            [](const vector<Node<T> *> &v1, const vector<Node<T> *> &v2) ->bool{return v1.size() < v2.size();});
     return new Graph<T>(nodes);
 }
 
@@ -729,9 +783,5 @@ vector<Node<T> *> Graph<T>::AStar(Node<T> *src, Node<T> *dest) {
 
     return vector<Node<T> *>();
 }
-
-
-template<class T>
-Graph<T>::Graph() = default;
 
 #endif //PROJ_GRAPH_H

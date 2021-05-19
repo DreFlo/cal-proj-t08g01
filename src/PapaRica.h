@@ -4,23 +4,20 @@
 #include <algorithm>
 
 #include "Graph.h"
-#include "Vehicle.h"
+#include "Components/Vehicle.h"
 
 typedef int type;
 
-//TODO change types
-//All can change
-class ProblemGraph {
+class PapaRica {
 public:
-    Graph<type> * startGraph;
-    Graph<type> * processedGraph;
+    Graph<type> * graph;
     vector<Vehicle> vehicles;
     vector<MealBasket> orders;
     //IDK
     vector<Node<type> * > destinations;
     Node<type>* hq;
 
-    explicit ProblemGraph(Graph<type> * graph);
+    explicit PapaRica(Graph<type> * graph);
 
     const vector<Vehicle> &getVehicles() const;
 

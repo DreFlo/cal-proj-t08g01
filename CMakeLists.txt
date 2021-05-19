@@ -15,7 +15,7 @@ file(GLOB GRAPHVIEWER_FILES CONFIGURE_DEPENDS
         "src/GraphViewerCpp/*.cpp"
         )
 
-add_executable(proj src/MealBasket.cpp src/MealBasket.h src/Vehicle.cpp src/Vehicle.h src/Graph.h src/main.cpp
-                src/ProblemGraph.cpp src/ProblemGraph.h ${GRAPHVIEWER_FILES} src/Viewer.cpp)
+add_executable(proj src/Components/MealBasket.cpp src/Components/MealBasket.h src/Components/Vehicle.cpp src/Components/Vehicle.h src/Graph.h src/main.cpp
+        src/PapaRica.cpp src/PapaRica.h ${GRAPHVIEWER_FILES} src/Viewer.cpp)
 
 target_link_libraries(proj graphviewer)
