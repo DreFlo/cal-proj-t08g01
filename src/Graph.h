@@ -645,7 +645,12 @@ Graph<T> * Graph<T>::getLargestSCC() {
 template<class T>
 Graph<T>::Graph(vector<Node<T> *> nodes) {
     Graph<T>::nodeSet = nodes;
-    for (int i = 0; i < nodeSet.size(); i++) nodeSet[i]->posAtVec = i;
+    for (int i = 0; i < nodeSet.size(); i++) {
+        nodeSet[i]->posAtVec = i;
+        for (Edge<T> &edge : nodeSet[i]->connections) {
+            if (find(nodeSet.begin(), nodeSet.end(), edge.dest) == nodeSet.end()) edge.weight = DOUBLE_MAX;
+        }
+    }
 }
 
 template<class T>
