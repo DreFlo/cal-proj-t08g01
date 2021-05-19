@@ -59,6 +59,7 @@ public:
     vector<Edge<T>> getConnections();
     pair<long double, long double> getPosition();
     size_t getPosAtVec() const;
+    bool isVisited() const;
 };
 
 template <class T>
@@ -132,6 +133,8 @@ public:
     // TODO: Comment
     void addBiEdge(const T &source, const T &dest, double weight);
 
+    void addBiEdge(Node<T>* source, Node<T>* dest, double weight);
+
     /**
      * @brief Removes an edge from the graph
      * @param source Contents of the source of the edge
@@ -200,6 +203,12 @@ public:
 
     Node<T> *getRandomNode() const;
 };
+
+template <class T>
+bool Node<T>::isVisited() const {
+    return visited;
+}
+
 
 template<class T>
 void Node<T>::addEdge(Node<T> *dest, double weight) {
@@ -492,6 +501,12 @@ void Graph<T>::addBiEdge(const T &source, const T &dest, double weight) {
     addUniEdge(dest, source, weight);
 }
 
+template <class T>
+void Graph<T>::addBiEdge(Node<T> *source, Node<T> *dest, double weight) {
+    addUniEdge(source, dest, weight);
+    addUniEdge(dest, source, weight);
+}
+
 template<class T>
 void Graph<T>::printDist() const {
     for(int i = 0; i < dist.size(); i++) {
@@ -583,8 +598,8 @@ void Graph<T>::readNodesFromFile(string file) {
 
         Node<T> *node = new Node<T>(info);
         node->position = position;
-        node->posAtVec = info - 1; //For Porto_full_nodes
-        //node->posAtVec = info; //For Grid Graphs
+        //node->posAtVec = info - 1; //For Porto_full_nodes
+        node->posAtVec = info; //For Grid Graphs
         nodes.push_back(node);
     }
     this->nodeSet = nodes;
@@ -691,8 +706,8 @@ void Graph<T>::readEdgesFromFileAsBi(string file) {
 
         dest = stoi(line);
 
-        auto src = findNode(source);
-        auto dst = findNode(dest);
+        auto src = nodeSet[source];
+        auto dst = nodeSet[dest];
 
         pair<long double, long double> posSrc, posDst;
         posSrc = src->getPosition();
@@ -700,7 +715,7 @@ void Graph<T>::readEdgesFromFileAsBi(string file) {
 
         long double weight = sqrt(pow(posSrc.first - posDst.first, 2) + pow(posSrc.second - posDst.second, 2));
 
-        addBiEdge(source, dest, weight);
+        addBiEdge(src, dst, weight);
     }
 }
 

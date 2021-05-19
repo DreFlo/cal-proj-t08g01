@@ -9,10 +9,10 @@ using namespace std;
 enum vehicle_type {HEAVY, LIGHT, MOTORCYCLE};
 
 class Vehicle {
-    vector<MealBasket> meals;
-    vehicle_type type;
-    unsigned int cap;
-    unsigned int used;
+    vector<MealBasket> meals;           //Meals to deliver
+    vehicle_type type;                  //Vehicle type
+    unsigned int cap;                   //Capacity in terms of number of packages it can hold
+    unsigned int used;                  //Used capacity
 public:
     explicit Vehicle();
 
