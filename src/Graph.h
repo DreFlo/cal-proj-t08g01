@@ -92,7 +92,7 @@ private:
      * @brief Depth-first search on graph
      * @param source Node to start DFS in
      */
-    void DFS(const T &source);
+    void DFS(Node<T>* node);
 
     void SCCVisit(Node<T> * src);
 
@@ -126,6 +126,8 @@ public:
      * @return true if both nodes exists and edge was added, false otherwise
      */
     bool addUniEdge(const T &source, const T &dest, double weight);
+
+    void addUniEdge(Node<T>* source, Node<T>* dest, double weight);
 
     // TODO: Comment
     void addBiEdge(const T &source, const T &dest, double weight);
@@ -323,6 +325,12 @@ bool Graph<T>::addUniEdge(const T &source, const T &dest, double weight) {
     return false;
 }
 
+template <class T>
+void Graph<T>::addUniEdge(Node<T> *source, Node<T> *dest, double weight) {
+    source->addEdge(dest, weight);
+    dest->addTransposeEdge(source, weight);
+}
+
 template<class T>
 bool Graph<T>::removeEdge(const T &source, const T &dest) {
     Node<T> *sourceTargetNode, *destTargetNode;
@@ -340,7 +348,8 @@ vector<Node<T>*> Graph<T>::getNodeSet() const {
 template<class T>
 void Graph<T>::removeUnnecessaryEdges(const T &source){
     resetVisited();
-    DFS(source);
+    Node<T>* srcNode = findNode(source);
+    DFS(srcNode);
     for(auto node : nodeSet){
         if (!(node->visited)){
             for(auto &edge : node->connections){
@@ -351,13 +360,12 @@ void Graph<T>::removeUnnecessaryEdges(const T &source){
 }
 
 template<class T>
-void Graph<T>::DFS(const T &source) {
-    Node<T> * node = findNode(source);
+void Graph<T>::DFS(Node<T>* node) {
     node->visited = true;
 
     for (auto i = node->connections.begin(); i != node->connections.end(); i++)
         if (!i->dest->visited)
-            DFS(i->dest->contents);
+            DFS(i->dest);
 }
 
 template<class T>
@@ -522,8 +530,15 @@ void Graph<T>::readEdgesFromFile(string file) {
 
         dest = stoi(line);
 
-        auto src = findNode(source);
-        auto dst = findNode(dest);
+        //For Porto_full_edges
+        auto src = nodeSet[source - 1];
+        auto dst = nodeSet[dest - 1];
+
+        //For GridGraphs
+        /*
+        auto src = nodeSet[source];
+        auto dst = nodeSet[dest];
+         */
 
         pair<long double, long double> posSrc, posDst;
         posSrc = src->getPosition();
@@ -531,7 +546,7 @@ void Graph<T>::readEdgesFromFile(string file) {
 
         long double weight = sqrt(pow(posSrc.first - posDst.first, 2) + pow(posSrc.second - posDst.second, 2));
 
-        addUniEdge(source, dest, weight);
+        addUniEdge(src, dst, weight);
     }
 }
 
@@ -540,7 +555,6 @@ void Graph<T>::readNodesFromFile(string file) {
     fstream node_file;
     string line;
     vector<Node<T>*> nodes;
-    size_t posAtVec = 0;
 
     node_file.open(file);
     getline(node_file, line);
@@ -569,10 +583,9 @@ void Graph<T>::readNodesFromFile(string file) {
 
         Node<T> *node = new Node<T>(info);
         node->position = position;
-        node->posAtVec = posAtVec;
+        node->posAtVec = info - 1; //For Porto_full_nodes
+        //node->posAtVec = info; //For Grid Graphs
         nodes.push_back(node);
-
-        posAtVec++;
     }
     this->nodeSet = nodes;
 }
