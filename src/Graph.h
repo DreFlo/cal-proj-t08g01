@@ -600,8 +600,8 @@ void Graph<T>::readNodesFromFile(string file) {
 
         Node<T> *node = new Node<T>(info);
         node->position = position;
-        //node->posAtVec = info - 1; //For Porto_full_nodes
-        node->posAtVec = info; //For Grid Graphs
+        node->posAtVec = info - 1; //For Porto_full_nodes
+        //node->posAtVec = info; //For Grid Graphs
         nodes.push_back(node);
     }
     this->nodeSet = nodes;

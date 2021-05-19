@@ -49,8 +49,15 @@ void ProblemGraph::setHQ(pair<long double, long double> address) {
 }
 
 void ProblemGraph::addOrder(const MealBasket& mealBasket) {
-    orders.push_back(mealBasket);
-    this->addDestination(mealBasket.getAddress());
+    auto pos = mealBasket.getAddress();
+    for(auto node : processedGraph->getNodeSet()){
+        if(pos == node->getPosition()){
+            orders.push_back(mealBasket);
+            this->addDestination(mealBasket.getAddress());
+            return;
+        }
+    }
+
 }
 
 void ProblemGraph::addVehicle(const Vehicle& vehicle) {
