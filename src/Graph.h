@@ -2,6 +2,7 @@
 #define PROJ_GRAPH_H
 
 #include <algorithm>
+#include <queue>
 #include <vector>
 #include <climits>
 #include <iostream>
@@ -181,7 +182,7 @@ public:
     Node<T> * operator[](int n);
 
 
-    std::vector<T> getNearestNeighbourPath(T info, const Vehicle& vehicle);
+    std::vector<int> getNearestNeighbourPath(T info, const Vehicle& vehicle);
     void printDist() const;
 
     void readGraphFromFile(string node_file, string edge_file);
@@ -193,8 +194,11 @@ public:
 
     Graph<T> * getLargestSCC();
 
+    vector<int> getAStarPath(T srcNode, T destNode);
+    double distMin(int node1, int node2);
+    double distMin(Node<T>* node1, Node<T>* node2);
     void setNodeSet(const vector<Node<T> *> &nodeSet);
-
+    double getDistFromPath(const vector<int>& vector);
     Node<T> *findNode(const T &contents) const;
     Node<T> *findNode(const std::pair<long double, long double> &pair) const;
 
@@ -452,26 +456,32 @@ Node<T> *Graph<T>::operator[](int n) {
 }
 
 template<class T>
-std::vector<T> Graph<T>::getNearestNeighbourPath(T info, const Vehicle& vehicle) {
+std::vector<int> Graph<T>::getNearestNeighbourPath(T info, const Vehicle& vehicle) {
 
-    std::vector<T> sortedNodes;
-    std::vector<T> result;
+    int posAtVecInfo = findNode(info)->posAtVec;
 
-    result.push_back(info);
+    std::vector<int> sortedNodes;
+    std::vector<int> result;
+
+    result.push_back(posAtVecInfo);
 
     for(MealBasket meal: vehicle.getMeals()) {
-        sortedNodes.push_back(findNode(meal.getAddress())->contents);
+        sortedNodes.push_back(findNode(meal.getAddress())->posAtVec);
     }
 
     while(!sortedNodes.empty()) {
         // Sorted relative to dist to info
         sort(sortedNodes.begin(), sortedNodes.end(),
-             [info, dist = getDist(), this](const T& t1, const T& t2) -> bool{
-                 return dist[findNode(t1)->posAtVec][findNode(info)->posAtVec]
-                        < dist[findNode(t2)->posAtVec][findNode(info)->posAtVec];
+             [posAtVecInfo, this](const int& t1, const int& t2) -> bool{
+                 /* Floyd Warshall
+                  * return dist[findNode(t1)->posAtVec][findNode(info)->posAtVec]
+                    < dist[findNode(t2)->posAtVec][findNode(info)->posAtVec];
+                    */
+                 return getDistFromPath(getAStarPath(t1, posAtVecInfo))
+                    < getDistFromPath(getAStarPath(t2, posAtVecInfo));
              });
 
-        result.push_back(info = sortedNodes[0]);
+        result.push_back(posAtVecInfo = sortedNodes[0]);
         sortedNodes.erase(sortedNodes.begin());
     }
 
@@ -715,6 +725,100 @@ Node<T> *Graph<T>::getRandomNode() const{
     return nodeSet[rand() % nodeSet.size()];
 }
 
+template<class T>
+vector<int> Graph<T>::getAStarPath(T srcNode, T destNode) {
+
+    // Node
+    Node<T> * nodeSrc = findNode(srcNode);
+    Node<T> * nodeDest = findNode(destNode);
+
+    map<int, double> distStar;            // Distance from the source node
+    map<int, vector<int>> pathStar;         // Path from the source node
+    map<int, bool> visited;               // Check if it is visited
+
+    // Priority queue -> order by ascending order of distance
+    priority_queue<pair<double, Node<T>*>, vector<pair<double, Node<T>*>>, greater<>> pqueue;
+
+    // Initialize values
+    for(Node<T> * node: nodeSet){
+        distStar[node->posAtVec] = DOUBLE_MAX;
+        visited[node->posAtVec] = false;
+    }
+
+    distStar[nodeSrc->posAtVec] = 0.0;
+    pathStar[nodeSrc->posAtVec].push_back(nodeSrc->posAtVec);
+    pqueue.push(make_pair(0.0, nodeSrc));
+
+    // Algorithm
+    while(!pqueue.empty()) {
+
+        Node<T>* currNode = pqueue.top().second;
+        pqueue.pop();
+        visited[currNode->posAtVec] = true;
+
+        // In case if encounters the destination node
+        if(currNode == findNode(destNode)) break;
+
+        // Check all the edges
+        for(auto edge: currNode->getConnections()){
+            Node<T>* nextNode = edge.getDest();
+
+            double weight = edge.getWeight();
+            double distNext = distMin(nextNode, nodeDest);
+            double distCurrent = distMin(currNode, nodeDest);
+
+            double aStarHeuristic = weight + distNext - distCurrent;
+
+            if(!visited[nextNode->posAtVec] && distStar[nextNode->posAtVec] > distStar[currNode->posAtVec] + weight + aStarHeuristic){
+                distStar[nextNode->posAtVec] = distStar[currNode->posAtVec] + weight + aStarHeuristic;
+                pqueue.push(make_pair(distStar[nextNode->posAtVec], nextNode));
+
+                pathStar[nextNode->posAtVec] = pathStar[currNode->posAtVec];
+                pathStar[nextNode->posAtVec].push_back(nextNode->posAtVec);
+            }
+
+        }
+
+    }
+
+
+    return pathStar[nodeDest->posAtVec];
+}
+
+template<class T>
+double Graph<T>::distMin(int nodePos1, int nodePos2) {
+    auto node1 = nodeSet[nodePos1];
+    auto node2 = nodeSet[nodePos2];
+
+    double deltaX = node1->position.first - node2->position.first;
+    double deltaY = node1->position.second - node2->position.second;
+
+    return sqrt(deltaX * deltaX + deltaY * deltaY);
+}
+
+template<class T>
+double Graph<T>::distMin(Node<T> *node1, Node<T> *node2) {
+    double deltaX = node1->position.first - node2->position.first;
+    double deltaY = node1->position.second - node2->position.second;
+
+    return sqrt(deltaX * deltaX + deltaY * deltaY);
+}
+
+template<class T>
+double Graph<T>::getDistFromPath(const vector<int>& vector) {
+    double distance = 0.0;
+
+    for(int i = 0; i < vector.size()-1; i++) {
+        for(Edge<T> edge: nodeSet[vector[i]]->getConnections()) {
+            if (edge.dest == nodeSet[vector[i + 1]]) {
+                distance += edge.weight;
+                break;
+            }
+        }
+    }
+
+    return distance;
+}
 
 
 template<class T>

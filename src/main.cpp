@@ -20,10 +20,8 @@ int main() {
     myGraph.removeUnnecessaryEdges(1);
 
     ProblemGraph problemGraph(myGraph.getLargestSCC());
-
-    viewGraph(problemGraph.startGraph);
-    /*
-    problemGraph.startGraph->floydWarshallShortestPath();
+    
+    //problemGraph.startGraph->floydWarshallShortestPath();
 
     problemGraph.setHQ(0);
 
@@ -33,9 +31,9 @@ int main() {
 
     problemGraph.assignOrdersToVehicles();
 
-    for(auto idk: problemGraph.startGraph->getFloydWarshallPath(problemGraph.startGraph->getNearestNeighbourPath(0, problemGraph.vehicles[0]))) {
+    for(auto idk: problemGraph.startGraph->getNearestNeighbourPath(0, problemGraph.vehicles[0])) {
         cout << idk << endl;
-    }*/
+    }
 
     return 0;
 }
