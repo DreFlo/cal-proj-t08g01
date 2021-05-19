@@ -21,7 +21,7 @@ int main() {
 
     //problemGraph.startGraph->floydWarshallShortestPath();
 
-    /*
+
     problemGraph.setHQ(0);
 
     problemGraph.addVehicle(Vehicle());
@@ -30,9 +30,10 @@ int main() {
 
     problemGraph.assignOrdersToVehicles();
 
-    for(auto idk: problemGraph.startGraph->getFloydWarshallPath(problemGraph.startGraph->getNearestNeighbourPath(0, problemGraph.vehicles[0]))) {
+    /*
+    for(auto idk: problemGraph.startGraph->getNearestNeighbourPath(0, problemGraph.vehicles[0])) {
         cout << idk << endl;
     }*/
-    viewGraph(problemGraph.graph);
+
     return 0;
 }
