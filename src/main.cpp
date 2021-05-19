@@ -21,21 +21,20 @@ int main() {
 
     ProblemGraph problemGraph(myGraph.getLargestSCC());
 
-    viewGraph(problemGraph.startGraph);
-    /*
     problemGraph.startGraph->floydWarshallShortestPath();
 
+    /*
     problemGraph.setHQ(0);
 
     problemGraph.addVehicle(Vehicle());
 
-    problemGraph.createClients();
+    problemGraph.createClients(20);
 
     problemGraph.assignOrdersToVehicles();
 
     for(auto idk: problemGraph.startGraph->getFloydWarshallPath(problemGraph.startGraph->getNearestNeighbourPath(0, problemGraph.vehicles[0]))) {
         cout << idk << endl;
     }*/
-
+    viewGraph(problemGraph.startGraph);
     return 0;
 }

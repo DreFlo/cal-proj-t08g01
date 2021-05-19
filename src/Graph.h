@@ -191,6 +191,8 @@ public:
 
     Graph<T> * getLargestSCC();
 
+    vector<Node<T> *> AStar(Node<T> * src, Node<T> * dest);
+
     void setNodeSet(const vector<Node<T> *> &nodeSet);
 
     Node<T> *findNode(const T &contents) const;
@@ -702,6 +704,18 @@ Node<T> *Graph<T>::getRandomNode() const{
     return nodeSet[rand() % nodeSet.size()];
 }
 
+template<class T>
+vector<Node<T> *> Graph<T>::AStar(Node<T> *src, Node<T> *dest) {
+
+    Node<T> * currentNode = src;
+
+    while(true) {
+        if (currentNode == dest) break;
+    }
+
+
+    return vector<Node<T> *>();
+}
 
 
 template<class T>
