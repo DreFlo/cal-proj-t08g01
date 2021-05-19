@@ -7,6 +7,7 @@ using namespace std;
 typedef MealBasket Client;
 
 PapaRica::PapaRica(Graph<type> *graph) {
+    //TODO: Discutir acerca disto
     graph->removeUnnecessaryEdges(1);
     PapaRica::graph = graph->getLargestSCC();
 }

@@ -13,6 +13,8 @@ int main() {
     srand((unsigned int)time(nullptr)); rand();
     Graph<int> myGraph;
 
+    //myGraph.readNodesFromFile("GridGraphs/16x16/nodes.txt");
+    //myGraph.readEdgesFromFileAsBi("GridGraphs/16x16/edges.txt");
 
     myGraph.readNodesFromFile("Porto/porto_full_nodes_xy.txt");
     myGraph.readEdgesFromFile("Porto/porto_full_edges.txt");
@@ -26,14 +28,14 @@ int main() {
 
     problemGraph.addVehicle(Vehicle());
 
-    problemGraph.createClients(20);
+    problemGraph.createClients(50);
 
     problemGraph.assignOrdersToVehicles();
 
-    /*
-    for(auto idk: problemGraph.startGraph->getNearestNeighbourPath(0, problemGraph.vehicles[0])) {
-        cout << idk << endl;
-    }*/
 
+    for(auto idk: problemGraph.graph->getNearestNeighbourPath(0, problemGraph.vehicles[0])) {
+        cout << idk << endl;
+    }
+    viewGraph(problemGraph.graph);
     return 0;
 }

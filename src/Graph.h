@@ -85,6 +85,14 @@ private:
     // Nodes in the graph
     std::vector<Node<T> *> nodeSet;
 
+    /**
+     * Help with Repeated A Star
+     *  pair -> nodes: initial and final
+     *  vector<int> -> path
+     */
+    map<pair<int, int>, vector<int>> calculatedPathWithAStar;
+
+
     // Floyd-Warshall matrices
     std::vector<std::vector<double>> dist;
     std::vector<std::vector<int>> next;
@@ -204,7 +212,7 @@ public:
      */
     Node<T> * operator[](int n);
 
-    std::vector<int> getNearestNeighbourPath(T info, const Vehicle& vehicle);
+    std::vector<int> getNearestNeighbourPath(int info, const Vehicle& vehicle);
 
     void printDist() const;
 
@@ -244,7 +252,7 @@ public:
 
     void setNodeSet(const vector<Node<T> *> &nodeSet);
 
-    vector<int> getAStarPath(T srcNode, T destNode);
+    vector<int> getAStarPath(int srcNode, int destNode);
     double distMin(int node1, int node2);
     double distMin(Node<T>* node1, Node<T>* node2);
     double getDistFromPath(const vector<int>& vector);
@@ -430,6 +438,7 @@ void Graph<T>::removeUnnecessaryEdges(const T &source){
     }
 }
 
+// TODO: ERROR
 template<class T>
 void Graph<T>::DFS(Node<T>* node) {
     node->visited = true;
@@ -523,9 +532,7 @@ Node<T> *Graph<T>::operator[](int n) {
 }
 
 template<class T>
-std::vector<int> Graph<T>::getNearestNeighbourPath(T info, const Vehicle& vehicle) {
-
-    int posAtVecInfo = findNode(info)->posAtVec;
+std::vector<int> Graph<T>::getNearestNeighbourPath(int posAtVecInfo, const Vehicle& vehicle) {
 
     std::vector<int> sortedNodes;
     std::vector<int> result;
@@ -544,8 +551,8 @@ std::vector<int> Graph<T>::getNearestNeighbourPath(T info, const Vehicle& vehicl
                   * return dist[findNode(t1)->posAtVec][findNode(info)->posAtVec]
                     < dist[findNode(t2)->posAtVec][findNode(info)->posAtVec];
                     */
-                 return getDistFromPath(getAStarPath(t1, posAtVecInfo))
-                    < getDistFromPath(getAStarPath(t2, posAtVecInfo));
+                 return getDistFromPath(getAStarPath(posAtVecInfo, t1))
+                    < getDistFromPath(getAStarPath(posAtVecInfo, t2));
              });
 
         result.push_back(posAtVecInfo = sortedNodes[0]);
@@ -618,10 +625,10 @@ void Graph<T>::readEdgesFromFile(string file) {
         auto dst = nodeSet[dest - 1];
 
         //For GridGraphs
-        /*
-        auto src = nodeSet[source];
-        auto dst = nodeSet[dest];
-         */
+
+        //auto src = nodeSet[source];
+        //auto dst = nodeSet[dest];
+
 
         pair<long double, long double> posSrc, posDst;
         posSrc = src->getPosition();
@@ -799,11 +806,14 @@ Node<T> *Graph<T>::getRandomNode() const{
 }
 
 template<class T>
-vector<int> Graph<T>::getAStarPath(T srcNode, T destNode) {
+vector<int> Graph<T>::getAStarPath(int srcNode, int destNode) {
 
+    if(calculatedPathWithAStar.find(make_pair(srcNode, destNode)) != calculatedPathWithAStar.end()) {
+        return calculatedPathWithAStar[make_pair(srcNode, destNode)];
+    }
     // Node
-    Node<T> * nodeSrc = findNode(srcNode);
-    Node<T> * nodeDest = findNode(destNode);
+    Node<T> * nodeSrc = nodeSet[srcNode];
+    Node<T> * nodeDest = nodeSet[destNode];
 
     map<int, double> distStar;            // Distance from the source node
     map<int, vector<int>> pathStar;         // Path from the source node
@@ -853,8 +863,8 @@ vector<int> Graph<T>::getAStarPath(T srcNode, T destNode) {
         }
 
     }
-
-
+    cout << srcNode << " " << destNode << endl;
+    calculatedPathWithAStar[make_pair(srcNode, destNode)] = pathStar[nodeDest->posAtVec];
     return pathStar[nodeDest->posAtVec];
 }
 
@@ -879,6 +889,7 @@ double Graph<T>::distMin(Node<T> *node1, Node<T> *node2) {
 
 template<class T>
 double Graph<T>::getDistFromPath(const vector<int>& vector) {
+    if(vector.empty()) return DOUBLE_MAX;
     double distance = 0.0;
 
     for(int i = 0; i < vector.size()-1; i++) {
