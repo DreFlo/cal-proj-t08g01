@@ -106,7 +106,7 @@ void PapaRica::setHQ(int nodePos) {
 void PapaRica::createClients(int number) {
     for(int i = 0; i < number; i++) {
         Client client;
-        client.setPackageNumber((rand() % 10) + 5);
+        client.setPackageNumber( 5);
         client.setAddress(graph->getRandomNode()->getPosition());
         addOrder(client);
     }

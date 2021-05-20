@@ -40,3 +40,5 @@ unsigned int Vehicle::getUsed() const {
 bool Vehicle::operator<(const Vehicle &rhs) const {
     return cap < rhs.cap;
 }
+
+Vehicle::Vehicle(vehicle_type type, unsigned int cap) : type(type), cap(cap), used(0) {}

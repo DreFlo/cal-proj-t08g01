@@ -24,18 +24,25 @@ int main() {
 
 
     papaRica.setHQ(300);
-    papaRica.addVehicle(Vehicle());
+    papaRica.addVehicle(Vehicle(HEAVY, 5));
+    papaRica.addVehicle(Vehicle(HEAVY, 10));
+    papaRica.addVehicle(Vehicle(HEAVY, 15));
 
-    papaRica.createClients();
+    //TODO revert create clients back to random package numbers
+    papaRica.createClients(5);
 
     papaRica.assignOrdersToVehicles();
 
-    papaRica.graph->setEdgePathType(papaRica.graph->getNearestNeighbourPath(papaRica.hq->getPosAtVec(), papaRica.vehicles[0]));
+    for (const Vehicle& vehicle : papaRica.vehicles) {
+        papaRica.graph->resetEdgeTypes();
+        cout << endl << vehicle.getCap() << endl << vehicle.getUsed() << endl << endl;
+        papaRica.graph->setEdgePathType(papaRica.graph->getNearestNeighbourPath(papaRica.hq->getPosAtVec(), vehicle));
+        viewGraph(papaRica.graph);
+    }
     /*
     for(auto idk: ) {
         cout << idk << endl;
     */
 
-    viewGraph(papaRica.graph);
     return 0;
 }

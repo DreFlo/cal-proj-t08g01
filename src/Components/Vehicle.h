@@ -16,6 +16,8 @@ class Vehicle {
 public:
     explicit Vehicle();
 
+    Vehicle(vehicle_type type, unsigned int cap);
+
     const vector<MealBasket> &getMeals() const;
 
     void setMeals(const vector<MealBasket> &meals);

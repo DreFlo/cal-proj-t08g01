@@ -296,6 +296,7 @@ public:
      */
     Node<T> *getRandomNode() const;
 
+    void resetEdgeTypes() const;
 };
 
 template <class T>
@@ -962,6 +963,15 @@ void Graph<T>::setEdgePathType(vector<int> destinations) {
                     break;
                 }
             }
+        }
+    }
+}
+
+template<class T>
+void Graph<T>::resetEdgeTypes() const {
+    for (Node<T> * node : nodeSet) {
+        for (Edge<T> & edge : node->connections) {
+            edge.setType(NORMAL);
         }
     }
 }
