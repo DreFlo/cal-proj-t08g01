@@ -48,16 +48,21 @@ void ProblemGraph::setHQ(pair<long double, long double> address) {
     }
 }
 
-void ProblemGraph::addOrder(const MealBasket& mealBasket) {
+bool ProblemGraph::addOrderB(const MealBasket& mealBasket) {
     auto pos = mealBasket.getAddress();
     for(auto node : processedGraph->getNodeSet()){
         if(pos == node->getPosition()){
             orders.push_back(mealBasket);
             this->addDestination(mealBasket.getAddress());
-            return;
+            return true;
         }
     }
+    return false;
+}
 
+void ProblemGraph::addOrder(const MealBasket &mealBasket) {
+    orders.push_back(mealBasket);
+    this->addDestination(mealBasket.getAddress());
 }
 
 void ProblemGraph::addVehicle(const Vehicle& vehicle) {
@@ -100,4 +105,131 @@ void ProblemGraph::createClients(int number) {
         client.setAddress(startGraph->getRandomNode()->getPosition());
         orders.push_back(client);
     }
+}
+
+void ProblemGraph::input() {
+    while(true) {
+        string answer;
+        cout << "Select one of the following options:" << endl;
+        cout << "[0] Add nothing." << endl;
+        cout << "[1] Add a Vehicle." << endl;
+        cout << "[2] Add an Order." << endl;
+        cin >> answer;
+        if(answer == "0") return;
+        else if(answer == "1"){
+            bool add = true;
+            while(add){
+                string type;
+                cout << "Select vehicle type:" << endl;
+                cout << "[0] Heavy" << endl;
+                cout << "[1] Light" << endl;
+                cout << "[2] Motorcycle" << endl;
+                cout << "[3] Go to the main menu" << endl;
+                cin >> type;
+                vehicle_type v_type;
+                if(type == "0" || type == "1" || type == "2"){
+                    if(type == "0") v_type = HEAVY;
+                    else if(type == "1") v_type =  LIGHT;
+                    else if(type == "2") v_type = MOTORCYCLE;
+                    while(add){
+                        string s_cap;
+                        cout << "Input vehicle capacity (Write 0 if infinite or -1 to go back to the main menu):" << endl;
+                        cin >> s_cap;
+                        int cap;
+                        if(s_cap == "-1") add = false;
+                        else if(!isNumber(s_cap)) cout << "Invalid choice. It can only be positive or -1." << endl << endl;
+                        else{
+                            if(s_cap == "0") cap = INT_MAX;
+                            else cap = stoi(s_cap);
+                            Vehicle vehicle = Vehicle();
+                            vehicle.setType(v_type);
+                            vehicle.setCap(cap);
+                            add = false;
+                            cout << "Vehicle added." << endl;
+                        }
+                    }
+                }
+                else if (type == "3") add = false;
+                else cout << "Invalid choice. It can only by 0, 1, 2 or 3." << endl << endl;
+            }
+        }
+        else if(answer == "2"){
+            bool add = true;
+            while(add){
+                string number;
+                cout << "How many meals in the basket? (Write 0 to go back to the main menu)" << endl;
+                cin >> number;
+                if(number == "0") add = false;
+                else if (!isNumber(number)) cout << "Invalid choice." << endl << endl;
+                else{
+                    int packageNumber = stoi(number);
+                    string name;
+                    cout << "Write your name 'First Last' (Write 0 to go back to the main menu):" << endl;
+                    cin.ignore(1000, '\n');
+                    getline(cin, name);
+                    if(name == "0") add = false;
+                    else{
+                        bool add_pos = true;
+                        while(add_pos) {
+                            string pos_x;
+                            cout << "Write the address in terms of x and y coordinates (Write 'a' to go back to the main menu):"
+                                    << endl;
+                            cout << "x: ";
+                            cin >> pos_x;
+                            if (pos_x == "a"){
+                                add = false;
+                                add_pos = false;
+                            }
+                            else if(!isNumber(pos_x)) cout << "Invalid Number." << endl;
+                            else {
+                                long double x = stold(pos_x);
+                                string pos_y;
+                                cout << "y: ";
+                                cin >> pos_y;
+                                if (pos_y == "a"){
+                                    add = false;
+                                    add_pos = false;
+                                }
+                                else if(!isNumber(pos_y)) cout << "Invalid number." << endl;
+                                else {
+                                    long double y = stold(pos_y);
+                                    pair<long double, long double> node_pos(x, y);
+                                    if (!addOrderB(MealBasket(packageNumber, name, node_pos))) {
+                                        string answer;
+                                        cout << "Node doesn't belong to graph or isn't reachable." << endl;
+                                        cout << "Do you want to try again?" << endl;
+                                        cout << "[0] Yes" << endl;
+                                        cout << "[1] Go back to the main menu" << endl;
+                                        cin >> answer;
+                                        if (answer == "0") continue;
+                                        else {
+                                            add = false;
+                                            add_pos = false;
+                                        }
+                                    }
+                                    else{
+                                        cout << "Order added." << endl;
+                                        add = false;
+                                        add_pos = false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        else cout << "Invalid choice. It can only by 0, 1 or 2." << endl << endl;
+    }
+}
+
+bool ProblemGraph::isNumber(string text) {
+    bool foundPoint = false;
+    for(string::iterator it = text.begin(); it != text.end(); it++){
+        if(it == text.begin() && *it == '-') continue;
+        else if(*it == '.' && !foundPoint) foundPoint = true;
+        else if(!isdigit(*it)) return false;
+    }
+    return true;
 }

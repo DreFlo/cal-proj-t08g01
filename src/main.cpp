@@ -13,15 +13,17 @@ int main() {
     srand((unsigned int)time(nullptr)); rand();
     Graph<int> myGraph;
 
+    myGraph.readNodesFromFile("GridGraphs/4x4/nodes.txt");
+    myGraph.readEdgesFromFileAsBi("GridGraphs/4x4/edges.txt");
 
-    myGraph.readNodesFromFile("Porto/porto_full_nodes_xy.txt");
-    myGraph.readEdgesFromFile("Porto/porto_full_edges.txt");
+    //myGraph.readNodesFromFile("Porto/porto_full_nodes_xy.txt");
+    //myGraph.readEdgesFromFile("Porto/porto_full_edges.txt");
 
-    myGraph.removeUnnecessaryEdges(1);
+    //viewGraph(myGraph.getLargestSCC());
 
-    ProblemGraph problemGraph(myGraph.getLargestSCC());
-
-    problemGraph.startGraph->floydWarshallShortestPath();
+    //problemGraph.startGraph->floydWarshallShortestPath();
+    ProblemGraph problemGraph(&myGraph);
+    problemGraph.input();
 
     /*
     problemGraph.setHQ(0);
@@ -35,6 +37,8 @@ int main() {
     for(auto idk: problemGraph.startGraph->getFloydWarshallPath(problemGraph.startGraph->getNearestNeighbourPath(0, problemGraph.vehicles[0]))) {
         cout << idk << endl;
     }*/
-    viewGraph(problemGraph.startGraph);
+    //(problemGraph.startGraph);
+    cout << problemGraph.getOrders().size() << endl;
+
     return 0;
 }
