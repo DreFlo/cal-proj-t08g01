@@ -13,27 +13,29 @@ int main() {
     srand((unsigned int)time(nullptr)); rand();
     Graph<int> myGraph;
 
-    myGraph.readNodesFromFile("GridGraphs/16x16/nodes.txt");
-    myGraph.readEdgesFromFileAsBi("GridGraphs/16x16/edges.txt");
+    //myGraph.readNodesFromFile("GridGraphs/16x16/nodes.txt");
+    //myGraph.readEdgesFromFileAsBi("GridGraphs/16x16/edges.txt");
 
-    //myGraph.readNodesFromFile("Porto/porto_full_nodes_xy.txt");
-    //myGraph.readEdgesFromFile("Porto/porto_full_edges.txt");
+    myGraph.readNodesFromFile("Porto/porto_full_nodes_xy.txt");
+    myGraph.readEdgesFromFile("Porto/porto_full_edges.txt");
     PapaRica papaRica(&myGraph);
-
-    viewGraph(papaRica.graph);
 
     //problemGraph.startGraph->floydWarshallShortestPath();
 
+
+    papaRica.setHQ(300);
+    papaRica.addVehicle(Vehicle());
+
+    papaRica.createClients();
+
+    papaRica.assignOrdersToVehicles();
+
+    papaRica.graph->setEdgePathType(papaRica.graph->getNearestNeighbourPath(papaRica.hq->getPosAtVec(), papaRica.vehicles[0]));
     /*
-    problemGraph.setHQ(0);
+    for(auto idk: ) {
+        cout << idk << endl;
+    */
 
-    problemGraph.addVehicle(Vehicle());
-
-    problemGraph.createClients(50);
-
-    problemGraph.assignOrdersToVehicles();*/
-
-    /*for(auto idk: problemGraph.graph->getNearestNeighbourPath(0, problemGraph.vehicles[0])) {
-        cout << idk << endl;*/
+    viewGraph(papaRica.graph);
     return 0;
 }

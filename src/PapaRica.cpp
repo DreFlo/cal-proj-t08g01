@@ -45,6 +45,7 @@ void PapaRica::setHQ(pair<long double, long double> address) {
     for(auto node : nodes){
         if(node->getPosition() == address){
             hq = node;
+            hq->setType(HQ);
             break;
         }
     }
@@ -76,6 +77,7 @@ void PapaRica::addDestination(pair<long double, long double> destination) {
     for(auto node : nodes){
         if(node->getPosition() == destination){
             destinations.push_back(node);
+            node->setType(CLIENT);
             break;
         }
     }
@@ -98,6 +100,7 @@ void PapaRica::assignOrdersToVehicles() {
 
 void PapaRica::setHQ(int nodePos) {
     PapaRica::hq = graph->getNodeSet()[nodePos];
+    hq->setType(HQ);
 }
 
 void PapaRica::createClients(int number) {
@@ -105,7 +108,7 @@ void PapaRica::createClients(int number) {
         Client client;
         client.setPackageNumber((rand() % 10) + 5);
         client.setAddress(graph->getRandomNode()->getPosition());
-        orders.push_back(client);
+        addOrder(client);
     }
 }
 

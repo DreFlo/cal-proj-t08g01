@@ -23,8 +23,23 @@ template <class T> class Edge;
 template <class T> class Node;
 template <class T> class Graph;
 
+typedef enum {
+    HQ, CLIENT, OTHER
+} NODE_TYPE;
+
+typedef enum {
+    PATH, NORMAL
+} EDGE_TYPE;
+
 template <class T>
 class Node {
+private:
+    NODE_TYPE type = OTHER;
+public:
+    NODE_TYPE getType() const;
+
+    void setType(NODE_TYPE type);
+
 private:
     T contents;
     std::vector<Edge<T>> connections;    //edges leaving from the node
@@ -63,6 +78,7 @@ public:
     pair<long double, long double> getPosition();
 
     size_t getPosAtVec() const;
+
     bool isVisited() const;
 };
 
@@ -71,6 +87,12 @@ class Edge {
 private:
     Node<T> *dest;
     double weight;
+    EDGE_TYPE type = NORMAL;
+public:
+    EDGE_TYPE getType() const;
+
+    void setType(EDGE_TYPE type);
+
 public:
     Edge(Node<T> *dest, double weight);
     friend class Graph<T>;
@@ -214,6 +236,8 @@ public:
 
     std::vector<int> getNearestNeighbourPath(int info, const Vehicle& vehicle);
 
+    void setEdgePathType(vector<int> destinations);
+
     void printDist() const;
 
     /**
@@ -331,6 +355,16 @@ size_t Node<T>::getPosAtVec() const {
 }
 
 template<class T>
+NODE_TYPE Node<T>::getType() const {
+    return type;
+}
+
+template<class T>
+void Node<T>::setType(NODE_TYPE type) {
+    Node::type = type;
+}
+
+template<class T>
 Edge<T>::Edge(Node<T> *dest, double weight) {
     this->dest = dest;
     this->weight = weight;
@@ -344,6 +378,16 @@ double Edge<T>::getWeight(){
 template<class T>
 Node<T>* Edge<T>::getDest() {
     return this->dest;
+}
+
+template<class T>
+EDGE_TYPE Edge<T>::getType() const {
+    return type;
+}
+
+template<class T>
+void Edge<T>::setType(EDGE_TYPE type) {
+    Edge::type = type;
 }
 
 template<class T>
@@ -539,7 +583,7 @@ std::vector<int> Graph<T>::getNearestNeighbourPath(int posAtVecInfo, const Vehic
 
     result.push_back(posAtVecInfo);
 
-    for(MealBasket meal: vehicle.getMeals()) {
+    for(const MealBasket& meal: vehicle.getMeals()) {
         sortedNodes.push_back(findNode(meal.getAddress())->posAtVec);
     }
 
@@ -563,6 +607,8 @@ std::vector<int> Graph<T>::getNearestNeighbourPath(int posAtVecInfo, const Vehic
 
     return result;
 }
+
+
 
 
 template<class T>
@@ -893,7 +939,7 @@ double Graph<T>::getDistFromPath(const vector<int>& vector) {
     double distance = 0.0;
 
     for(int i = 0; i < vector.size()-1; i++) {
-        for(Edge<T> edge: nodeSet[vector[i]]->getConnections()) {
+        for(Edge<T> & edge: nodeSet[vector[i]]->getConnections()) {
             if (edge.dest == nodeSet[vector[i + 1]]) {
                 distance += edge.weight;
                 break;
@@ -902,6 +948,22 @@ double Graph<T>::getDistFromPath(const vector<int>& vector) {
     }
 
     return distance;
+}
+
+template<class T>
+void Graph<T>::setEdgePathType(vector<int> destinations) {
+    for (int i = 0; i < destinations.size() - 1; i++) {
+        vector<int> path = getAStarPath(destinations[i], destinations[i + 1]);
+        if (path.empty()) continue;
+        for (int u = 0; u < path.size() - 1; u++) {
+            for (auto edgeIt = nodeSet[path[u]]->connections.begin(); edgeIt != nodeSet[path[u]]->connections.end(); edgeIt++) {
+                if (edgeIt->dest == nodeSet[path[u + 1]]) {
+                    edgeIt->setType(PATH);
+                    break;
+                }
+            }
+        }
+    }
 }
 
 
