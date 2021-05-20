@@ -23,8 +23,8 @@ void viewGraph(Graph<T>* graph){
         for(auto edge : node->getConnections()){
             if (edge.getWeight() == numeric_limits<double>::max())
                 continue;
-            gv.addEdge(idEdge, gv.getNode(node->getPosAtVec()), gv.getNode(edge.getDest()->getPosAtVec()),
-                       GraphViewer::Edge::UNDIRECTED);
+            GVEdge &gvEdge = gv.addEdge(idEdge, gv.getNode(node->getPosAtVec()), gv.getNode(edge.getDest()->getPosAtVec()),
+                            GraphViewer::Edge::UNDIRECTED);
             idEdge++;
         }
     }

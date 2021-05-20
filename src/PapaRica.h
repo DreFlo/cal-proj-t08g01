@@ -2,6 +2,8 @@
 #define PROJ_PROBLEMGRAPH_H
 
 #include <algorithm>
+#include <string>
+#include <iostream>
 
 #include "Graph.h"
 #include "Components/Vehicle.h"
@@ -39,6 +41,8 @@ public:
 
     void addOrder(const MealBasket& mealBasket);
 
+    bool addOrderB(const MealBasket& mealBasket);
+
     void addDestination(pair<long double, long double> destination);
 
     void addVehicle(const Vehicle& vehicle);
@@ -46,6 +50,12 @@ public:
     void assignOrdersToVehicles();
 
     void createClients(int number = 10);
+
+    void input();
+
+private:
+
+    bool isNumber(string text);
 };
 
 
