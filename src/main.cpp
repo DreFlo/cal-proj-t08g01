@@ -12,22 +12,14 @@ using namespace std;
 
 int main() {
     srand((unsigned int)time(nullptr)); rand();
+    srand((unsigned int)time(nullptr)); rand();
     Graph<int> myGraph;
 
-    myGraph.readNodesFromFile("GridGraphs/4x4/nodes.txt");
-    myGraph.readEdgesFromFileAsBi("GridGraphs/4x4/edges.txt");
-
-    PapaRica papaRica(&myGraph);
-
-    papaRica.input();
-
-    /*
     myGraph.readNodesFromFile("Porto/porto_full_nodes_xy.txt");
     myGraph.readEdgesFromFile("Porto/porto_full_edges.txt");
     PapaRica papaRica(&myGraph);
 
-    //problemGraph.startGraph->floydWarshallShortestPath();
-
+    //papaRica.input();
 
     papaRica.setHQ(300);
     papaRica.addVehicle(Vehicle(HEAVY, 5));
@@ -39,15 +31,16 @@ int main() {
 
     papaRica.assignOrdersToVehicles();
 
+    cout << "Number of trajectories: " << papaRica.getUsedVehicles() << endl;
+
     for (const Vehicle& vehicle : papaRica.vehicles) {
         papaRica.graph->resetEdgeTypes();
-        cout << endl << vehicle.getCap() << endl << vehicle.getUsed() << endl << endl;
         if(papaRica.isAStar())
             papaRica.graph->setEdgePathType(papaRica.graph->getNearestNeighbourPathAStar(papaRica.hq->getPosAtVec(), vehicle));
         else
             papaRica.graph->setEdgePathType(papaRica.graph->getNearestNeighbourPathFloydWarshall(papaRica.hq->getPosAtVec(), vehicle));
         viewGraph(papaRica.graph);
-    }*/
+    }
 
     return 0;
 }

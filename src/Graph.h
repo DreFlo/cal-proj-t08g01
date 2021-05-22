@@ -60,7 +60,6 @@ private:
      * @return true if edge existed and was removed, false otherwise
      */
     bool removeEdgeTo(Node<T> *dest);
-
     /**
      * Add edge to transpose connections
      */
@@ -79,6 +78,9 @@ public:
 
     size_t getPosAtVec() const;
 
+    /**
+     * @return true if visited = true, else false
+     */
     bool isVisited() const;
 };
 
@@ -90,10 +92,7 @@ private:
     EDGE_TYPE type = NORMAL;
 public:
     EDGE_TYPE getType() const;
-
     void setType(EDGE_TYPE type);
-
-public:
     Edge(Node<T> *dest, double weight);
     friend class Graph<T>;
     friend class Node<T>;
@@ -113,7 +112,6 @@ private:
      *  vector<int> -> path
      */
     map<pair<int, int>, vector<int>> calculatedPathWithAStar;
-
 
     // Floyd-Warshall matrices
     std::vector<std::vector<double>> dist;
@@ -168,19 +166,21 @@ public:
      * @return true if both nodes exists and edge was added, false otherwise
      */
     bool addUniEdge(const T &source, const T &dest, double weight);
-
     /**
      * Add unidirectional dge from node pointers.
      */
     void addUniEdge(Node<T>* source, Node<T>* dest, double weight);
-
     /**
      * Add bidirectional edge from node contents
      */
     void addBiEdge(const T &source, const T &dest, double weight);
-
+    /**
+     * @brief Add a bidirectional edge using nodes
+     * @param source Source node pointer
+     * @param dest Destination Node pointer
+     * @param weight Weight
+     */
     void addBiEdge(Node<T>* source, Node<T>* dest, double weight);
-
     /**
      * @brief Removes an edge from the graph
      * @param source Contents of the source of the edge
@@ -188,33 +188,22 @@ public:
      * @return true if edge existed and was removed, false otherwise
      */
     bool removeEdge(const T &source, const T &dest);
-
     std::vector<Node<T>*> getNodeSet() const;
-
-    /**
-     * Remove the unnecessary edges, setting the weight value to infinite
-     * @param source initial node
-     */
-    void removeUnnecessaryEdges(const T &source);
-
     /**
      * Return the weight value from edge between the node with index i and j
      */
     double edgeCost(int i, int j);
-
     /**
      * Return the nest node of the path
      * @return return -1 if j is not the next path, j otherwise
      */
     int nodePrev(int i, int j);
-
     /**
      * Floyd Warshall Algorithm
      *  Algorithm used to calculate the shortest path between all the pairs of nodes
      *  in the graph
      */
     void floydWarshallShortestPath();
-
     /**
      * Sequence of elements in the graph in the path from u to v
      * @param source info from the initial node
@@ -222,7 +211,6 @@ public:
      * @return vector with path
      */
     std::vector<Node<T> *> getFloydWarshallPath(const T &source, const T &destination);
-
     /**
      * Get Floyd Warshall path between consecutive pairs of nodes in argument vector
      * @return Vector with the contents
@@ -233,49 +221,59 @@ public:
      * @return Node in nodeSet with index n
      */
     Node<T> * operator[](int n);
-
+    /**
+     * @brief Gets the path from and to the starting node and passing through all the address in the vehicle using A*
+     * @param posAtVecInfo Position in nodeSet vector of the starting node
+     * @param vehicle Vehicle that contains the orders with the addresses for the clients
+     * @return Vector in which each value corresponds the the contents of a different node to pass through
+     */
     std::vector<int> getNearestNeighbourPathAStar(int posAtVecInfo, const Vehicle& vehicle);
-
+    /**
+     * @brief Gets the path from and to the starting node and passing through all the address in the vehicle using Floyd-Warshall
+     * @param posAtVecInfo Position in nodeSet vector of the starting node
+     * @param vehicle Vehicle that contains the orders with the addresses for the clients
+     * @return Vector in which each value corresponds the the contents of a different node to pass through
+     */
     std::vector<int> getNearestNeighbourPathFloydWarshall(int posAtVecInfo, const Vehicle& vehicle);
-
     void setEdgePathType(vector<int> destinations);
-
     void printDist() const;
-
     /**
      * Create graph from given node and edge files.
      */
     void readGraphFromFile(string node_file, string edge_file);
-
     /**
      * Read nodes from given file
      */
     void readNodesFromFile(string file);
-
     /**
      * Read edges from given file
      */
     void readEdgesFromFile(string file);
-
     /**
      * Read edges from given file as bi-directional
      */
     void readEdgesFromFileAsBi(string file);
-
+    /**
+     * @brief Adds a node
+     * @param contents Contents of the node
+     * @param position Node position in terms of x and y
+     */
     void addNode(T &contents, pair<double, double> position);
-
     /**
      * Get all SCCs in the graph
      */
     vector<vector<Node<T> *>> getSCCs();
-
     /**
      * Get largest SCC in the graph
      */
     Graph<T> * getLargestSCC();
-
     void setNodeSet(const vector<Node<T> *> &nodeSet);
-
+    /**
+     * @brief Gets the path from one node to another using A*
+     * @param srcNode Contents of starting node
+     * @param destNode Contents of destination node
+     * @return Vector with contents to which node to pass through in order
+     */
     vector<int> getAStarPath(int srcNode, int destNode);
     double distMin(int node1, int node2);
     double distMin(Node<T>* node1, Node<T>* node2);
@@ -466,30 +464,6 @@ bool Graph<T>::removeEdge(const T &source, const T &dest) {
 template<class T>
 vector<Node<T>*> Graph<T>::getNodeSet() const {
     return nodeSet;
-}
-
-template<class T>
-void Graph<T>::removeUnnecessaryEdges(const T &source){
-    resetVisited();
-    Node<T>* srcNode = findNode(source);
-    DFS(srcNode);
-    for(auto node : nodeSet){
-        if (!(node->visited)){
-            for(auto &edge : node->connections){
-                edge.weight = DOUBLE_MAX;
-            }
-        }
-    }
-}
-
-// TODO: ERROR
-template<class T>
-void Graph<T>::DFS(Node<T>* node) {
-    node->visited = true;
-
-    for (auto i = node->connections.begin(); i != node->connections.end(); i++)
-        if (!i->dest->visited)
-            DFS(i->dest);
 }
 
 template<class T>
@@ -739,8 +713,8 @@ void Graph<T>::readNodesFromFile(string file) {
 
         Node<T> *node = new Node<T>(info);
         node->position = position;
-        //node->posAtVec = info - 1; //For Porto_full_nodes
-        node->posAtVec = info; //For Grid Graphs
+        node->posAtVec = info - 1; //For Porto_full_nodes
+        //node->posAtVec = info; //For Grid Graphs
         nodes.push_back(node);
     }
     this->nodeSet = nodes;
@@ -929,7 +903,6 @@ vector<int> Graph<T>::getAStarPath(int srcNode, int destNode) {
         }
 
     }
-    cout << srcNode << " " << destNode << endl;
     calculatedPathWithAStar[make_pair(srcNode, destNode)] = pathStar[nodeDest->posAtVec];
     return pathStar[nodeDest->posAtVec];
 }

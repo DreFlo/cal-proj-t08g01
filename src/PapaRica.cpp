@@ -256,6 +256,14 @@ bool PapaRica::isAStar() {
     return aStar;
 }
 
+int PapaRica::getUsedVehicles() {
+    int used = 0;
+    for(const Vehicle& vehicle: vehicles){
+        if(vehicle.getUsed() != 0) used++;
+    }
+    return used;
+}
+
 bool PapaRica::isNumber(string text) {
     bool foundPoint = false;
     for(string::iterator it = text.begin(); it != text.end(); it++){

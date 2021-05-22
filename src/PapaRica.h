@@ -57,6 +57,8 @@ public:
 
     bool isAStar();
 
+    int getUsedVehicles();
+
 private:
 
     bool isNumber(string text);
