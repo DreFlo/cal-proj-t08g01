@@ -89,4 +89,143 @@
 \end{algorithmic}
 \end{algorithm}
 
+\begin{algorithm}[h]
+\caption{First Fit Decreasing}
+\begin{algorithmic}[1]
+
+\State Vehicles $\gets$ all available vehicles
+\State Orders $\gets$ all orders to distribute
+
+\Procedure {FFD}{}
+
+\State $sortVehiclesByCapacity(Vehicles)$
+\State $sortOrdersByCapacityDescending(Orders)$
+
+\ForEach{order $\in$ Orders}
+	\ForEach{vehicle $\in$ Vehicles}
+		\If{$vehicle.usedCapacity + order.packageNumber <= vehicle.maxCapacity$}
+			\State vehicle.addOrder(order)
+			\State break
+		\EndIf
+	\EndFor
+\EndFor
+\State Orders.clear()
+\EndProcedure
+
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Get Largest Strongly Connected Component}
+\begin{algorithmic}[1]
+
+\State graph = (V, E)
+
+\Procedure {GetSCCsByKosaraju}{}
+
+\State result $\gets$ vector of vectors of nodes
+\State nodeStack $\gets$ stack of nodes
+
+\State setAllNodesToNotVisited(graph)
+
+\ForEach{node $\in$ graph.getNodes()}
+	\State SCCVisit(node, nodeStack)
+\EndFor
+
+\State transpose $\gets$ graph.getTranspose()
+
+\State setAllNodesToNotVisited(graph)
+
+\While{\textbf{not} nodeStack.empty()}
+	\State node $\gets$ nodeStack.top()
+	\State nodeStack.pop()
+
+	\If{\textbf{not} node.isVisited()}
+		\State result.add(transpose.DFS(node))
+	\EndIf
+\EndWhile
+
+\State \textbf{return} result
+\EndProcedure
+
+\State
+
+\Procedure {SCCVisit}{node, nodeStack}
+	\State node.setVisitedToTrue()
+
+	\ForEach{edge $\in$ node.getEdges()}
+		\If{\textbf{not} edge.getDestination().isVisited()}
+			\State SSCVisit(edge.getDestination(), nodeStack)
+		\EndIf
+	\EndFor
+
+	\State nodeStack.push(node)
+\EndProcedure
+
+\State
+
+\Procedure {GetLargestSCC}{}
+	\State SCCs $\gets$ GetSCCsByKosaraju
+	\State nodes $\gets$ maxVectorBySize(SCCs)
+	\State \textbf{return} nodes
+\EndProcedure
+
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Shortest Path Between Two Points By A* Algorithm}
+\begin{algorithmic}[1]
+
+\Procedure {distMin}{node1, node2}
+	\State \textbf{return} staright line distance between node1 and node2 based on coordinates
+\EndProcedure
+
+\State
+
+\Procedure {GetAStarPath}{G = (V, E), srcNode, destNode}
+
+\ForEach{v $\in$ V}
+	\State dist(v) $\gets$ INF $\to$ \textbf{Distance from the source node}
+	\State path(v) $\gets$ null $\to$ \textbf{Path from the source node}
+	\State visited(v) $\gets$ false $\to$ \textbf{Check if it is visited} 
+\EndFor
+
+\State pqueue $\to$ \textbf{Priority Queue of pairs of distances and nodes by ascending order of distance}
+
+\State dist(srcNode) $\gets$ 0.0
+\State path(srcNode).push(srcNode)
+\State ENQUEUE(pqueue, pair(0.0, srcNode))
+
+\While{\textbf{not} pqueue.isEmptty()}
+	\State node $\gets$ DEQUEUE(pqueue)
+	\State visited(node) $\gets$ true
+	\If{node = destNode}
+		\State break
+	\EndIf
+
+	\ForEach{edge $\in$ node.getEdges()}
+		\State dest $\gets$ edge.getDestination()
+		\State weight $\gets$ edge.getWeight()
+		\State distNext $\gets$ distMin(dest, destNode)
+		\State distCurrent $\gets$ distMin(node, destNode)
+
+		\State aStarHeuristic $\gets$ weight + distNext - distCurrent
+
+		\If{\textbf{not} visited(dest) \textbf{and} dist(dest) > dist(node) + weight + aStarHeuristic}
+			\State dist(dest) $\gets$ dist(node) + weight + aStarHeuristic
+			\State ENQUEUE(pqueue, pair(dist(dest), dest))
+
+			\State path(dest) = path(node)
+			\State path(dest).push(dest)
+		\EndIf
+	\EndFor
+\EndWhile
+
+\State \textbf{return} path(nodeDest)
+\EndProcedure
+
+\end{algorithmic}
+\end{algorithm}
+
 \end{document}
