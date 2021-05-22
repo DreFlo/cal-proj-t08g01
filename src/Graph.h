@@ -234,7 +234,9 @@ public:
      */
     Node<T> * operator[](int n);
 
-    std::vector<int> getNearestNeighbourPath(int info, const Vehicle& vehicle);
+    std::vector<int> getNearestNeighbourPathAStar(int posAtVecInfo, const Vehicle& vehicle);
+
+    std::vector<int> getNearestNeighbourPathFloydWarshall(int posAtVecInfo, const Vehicle& vehicle);
 
     void setEdgePathType(vector<int> destinations);
 
@@ -272,8 +274,6 @@ public:
      */
     Graph<T> * getLargestSCC();
 
-    vector<Node<T> *> AStar(Node<T> * src, Node<T> * dest);
-
     void setNodeSet(const vector<Node<T> *> &nodeSet);
 
     vector<int> getAStarPath(int srcNode, int destNode);
@@ -303,7 +303,6 @@ template <class T>
 bool Node<T>::isVisited() const {
     return visited;
 }
-
 
 template<class T>
 void Node<T>::addEdge(Node<T> *dest, double weight) {
@@ -577,7 +576,7 @@ Node<T> *Graph<T>::operator[](int n) {
 }
 
 template<class T>
-std::vector<int> Graph<T>::getNearestNeighbourPath(int posAtVecInfo, const Vehicle& vehicle) {
+std::vector<int> Graph<T>::getNearestNeighbourPathAStar(int posAtVecInfo, const Vehicle& vehicle) {
 
     std::vector<int> sortedNodes;
     std::vector<int> result;
@@ -592,10 +591,6 @@ std::vector<int> Graph<T>::getNearestNeighbourPath(int posAtVecInfo, const Vehic
         // Sorted relative to dist to info
         sort(sortedNodes.begin(), sortedNodes.end(),
              [posAtVecInfo, this](const int& t1, const int& t2) -> bool{
-                 /* Floyd Warshall
-                  * return dist[findNode(t1)->posAtVec][findNode(info)->posAtVec]
-                    < dist[findNode(t2)->posAtVec][findNode(info)->posAtVec];
-                    */
                  return getDistFromPath(getAStarPath(posAtVecInfo, t1))
                     < getDistFromPath(getAStarPath(posAtVecInfo, t2));
              });
@@ -609,8 +604,33 @@ std::vector<int> Graph<T>::getNearestNeighbourPath(int posAtVecInfo, const Vehic
     return result;
 }
 
+template <class T>
+std::vector<int> Graph<T>::getNearestNeighbourPathFloydWarshall(int posAtVecInfo, const Vehicle &vehicle) {
+    std::vector<int> sortedNodes;
+    std::vector<int> result;
 
+    result.push_back(posAtVecInfo);
 
+    for(const MealBasket& meal: vehicle.getMeals()) {
+        sortedNodes.push_back(findNode(meal.getAddress())->posAtVec);
+    }
+
+    while(!sortedNodes.empty()) {
+        // Sorted relative to dist to info
+        sort(sortedNodes.begin(), sortedNodes.end(),
+             [posAtVecInfo, this](const int& t1, const int& t2) -> bool{
+                  return dist[findNode(t1)->posAtVec][findNode(posAtVecInfo)->posAtVec]
+                    < dist[findNode(t2)->posAtVec][findNode(posAtVecInfo)->posAtVec];
+             });
+
+        result.push_back(posAtVecInfo = sortedNodes[0]);
+        sortedNodes.erase(sortedNodes.begin());
+    }
+
+    result.push_back(result[0]);
+
+    return result;
+}
 
 template<class T>
 const vector<std::vector<double>> &Graph<T>::getDist() const {
@@ -672,7 +692,6 @@ void Graph<T>::readEdgesFromFile(string file) {
         auto dst = nodeSet[dest - 1];
 
         //For GridGraphs
-
         //auto src = nodeSet[source];
         //auto dst = nodeSet[dest];
 

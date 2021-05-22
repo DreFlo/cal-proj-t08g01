@@ -37,3 +37,6 @@ cmake-build-debug/
 
 #GraphViewer
 src/GraphViewerCpp/
+
+#Windows10 Stupidity
+src/sdads

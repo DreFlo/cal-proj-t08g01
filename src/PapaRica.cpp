@@ -7,9 +7,8 @@ using namespace std;
 typedef MealBasket Client;
 
 PapaRica::PapaRica(Graph<type> *graph) {
-    //TODO: Discutir acerca disto
-    //graph->removeUnnecessaryEdges(1);
     PapaRica::graph = graph->getLargestSCC();
+    aStar = true;
 }
 
 const vector<Vehicle> &PapaRica::getVehicles() const {
@@ -115,12 +114,28 @@ void PapaRica::createClients(int number) {
 void PapaRica::input() {
     while(true) {
         string answer;
-        cout << "Select one of the following options:" << endl;
+        cout << "Do you want to add anything before starting?" << endl;
         cout << "[0] Add nothing." << endl;
         cout << "[1] Add a Vehicle." << endl;
         cout << "[2] Add an Order." << endl;
         cin >> answer;
-        if(answer == "0") return;
+        if(answer == "0"){
+            while(true) {
+                string algorithm;
+                cout << "With which algorithm do you want to run the program with?" << endl;
+                cout << "[0] A*" << endl;
+                cout << "[1] Floyd-Warshall" << endl;
+                cin >> algorithm;
+                if (algorithm == "0") return;
+                else if (algorithm == "1") {
+                    setUpFloydWarshall();
+                    return;
+                }
+                else{
+                    cout << "Invalid Choice. It can only be 0 or 1." << endl;
+                }
+            }
+        }
         else if(answer == "1"){
             bool add = true;
             while(add){
@@ -130,7 +145,8 @@ void PapaRica::input() {
                 cout << "[1] Light" << endl;
                 cout << "[2] Motorcycle" << endl;
                 cout << "[3] Go to the main menu" << endl;
-                cin >> type;
+                cin.ignore(1000, '\n');
+                getline(cin, type);
                 vehicle_type v_type;
                 if(type == "0" || type == "1" || type == "2"){
                     if(type == "0") v_type = HEAVY;
@@ -229,6 +245,15 @@ void PapaRica::input() {
         }
         else cout << "Invalid choice. It can only by 0, 1 or 2." << endl << endl;
     }
+}
+
+void PapaRica::setUpFloydWarshall() {
+    aStar = false;
+    graph->floydWarshallShortestPath();
+}
+
+bool PapaRica::isAStar() {
+    return aStar;
 }
 
 bool PapaRica::isNumber(string text) {

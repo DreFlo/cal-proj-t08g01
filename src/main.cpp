@@ -1,6 +1,7 @@
 #include <ctime>
 #include <iostream>
 #include <cstdlib>
+#include <chrono>
 
 #include "Graph.h"
 #include "PapaRica.h"
@@ -13,9 +14,14 @@ int main() {
     srand((unsigned int)time(nullptr)); rand();
     Graph<int> myGraph;
 
-    //myGraph.readNodesFromFile("GridGraphs/16x16/nodes.txt");
-    //myGraph.readEdgesFromFileAsBi("GridGraphs/16x16/edges.txt");
+    myGraph.readNodesFromFile("GridGraphs/4x4/nodes.txt");
+    myGraph.readEdgesFromFileAsBi("GridGraphs/4x4/edges.txt");
 
+    PapaRica papaRica(&myGraph);
+
+    papaRica.input();
+
+    /*
     myGraph.readNodesFromFile("Porto/porto_full_nodes_xy.txt");
     myGraph.readEdgesFromFile("Porto/porto_full_edges.txt");
     PapaRica papaRica(&myGraph);
@@ -36,13 +42,12 @@ int main() {
     for (const Vehicle& vehicle : papaRica.vehicles) {
         papaRica.graph->resetEdgeTypes();
         cout << endl << vehicle.getCap() << endl << vehicle.getUsed() << endl << endl;
-        papaRica.graph->setEdgePathType(papaRica.graph->getNearestNeighbourPath(papaRica.hq->getPosAtVec(), vehicle));
+        if(papaRica.isAStar())
+            papaRica.graph->setEdgePathType(papaRica.graph->getNearestNeighbourPathAStar(papaRica.hq->getPosAtVec(), vehicle));
+        else
+            papaRica.graph->setEdgePathType(papaRica.graph->getNearestNeighbourPathFloydWarshall(papaRica.hq->getPosAtVec(), vehicle));
         viewGraph(papaRica.graph);
-    }
-    /*
-    for(auto idk: ) {
-        cout << idk << endl;
-    */
+    }*/
 
     return 0;
 }

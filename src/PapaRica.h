@@ -15,9 +15,9 @@ public:
     Graph<type> * graph;
     vector<Vehicle> vehicles;
     vector<MealBasket> orders;
-    //IDK
     vector<Node<type> * > destinations;
     Node<type>* hq;
+    bool aStar;
 
     explicit PapaRica(Graph<type> * graph);
 
@@ -52,6 +52,10 @@ public:
     void createClients(int number = 10);
 
     void input();
+
+    void setUpFloydWarshall();
+
+    bool isAStar();
 
 private:
 
