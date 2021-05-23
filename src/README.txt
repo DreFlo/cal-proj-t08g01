@@ -1,6 +1,5 @@
 Instruções de Compilação:
-- Criar um projeto de CLion e incluir uma pasta chamada 'src'
-- Copiar todos os ficheiros fornecidos, exceto 'CMakeLists.txt' para pasta 'src'
+- Criar um projeto de CLion e copiar a pasta 'src' para o diretório do projeto.
 - Carregar o ficheiro 'CMakeLists.txt' fornecido usando 'Load CMake Project'
 - Definir como 'working directory' a pasta 'src'
 - Correr o projeto
