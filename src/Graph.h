@@ -669,7 +669,6 @@ void Graph<T>::readEdgesFromFile(string file) {
         //auto src = nodeSet[source];
         //auto dst = nodeSet[dest];
 
-
         pair<long double, long double> posSrc, posDst;
         posSrc = src->getPosition();
         posDst = dst->getPosition();

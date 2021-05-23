@@ -1,7 +1,6 @@
 #include <ctime>
 #include <iostream>
 #include <cstdlib>
-#include <chrono>
 
 #include "Graph.h"
 #include "PapaRica.h"
@@ -19,27 +18,33 @@ int main() {
     myGraph.readEdgesFromFile("Porto/porto_full_edges.txt");
     PapaRica papaRica(&myGraph);
 
-    //papaRica.input();
+    papaRica.input();
 
     papaRica.setHQ(300);
-    papaRica.addVehicle(Vehicle(HEAVY, 5));
-    papaRica.addVehicle(Vehicle(HEAVY, 10));
-    papaRica.addVehicle(Vehicle(HEAVY, 15));
+    papaRica.addVehicle(Vehicle(HEAVY, 35));
+    papaRica.addVehicle(Vehicle(HEAVY, 25));
+    papaRica.addVehicle(Vehicle(HEAVY, 40));
+    papaRica.addVehicle(Vehicle(HEAVY, 20));
+    papaRica.addVehicle(Vehicle(HEAVY, 45));
+    papaRica.addVehicle(Vehicle(HEAVY, 50));
 
-    //TODO revert create clients back to random package numbers
-    papaRica.createClients(5);
+    papaRica.createClients(rand() % 15 + 5);
 
     papaRica.assignOrdersToVehicles();
 
     cout << "Number of trajectories: " << papaRica.getUsedVehicles() << endl;
 
     for (const Vehicle& vehicle : papaRica.vehicles) {
-        papaRica.graph->resetEdgeTypes();
-        if(papaRica.isAStar())
-            papaRica.graph->setEdgePathType(papaRica.graph->getNearestNeighbourPathAStar(papaRica.hq->getPosAtVec(), vehicle));
-        else
-            papaRica.graph->setEdgePathType(papaRica.graph->getNearestNeighbourPathFloydWarshall(papaRica.hq->getPosAtVec(), vehicle));
-        viewGraph(papaRica.graph);
+        if(vehicle.getUsed() > 0) {
+            papaRica.graph->resetEdgeTypes();
+            if (papaRica.isAStar())
+                papaRica.graph->setEdgePathType(
+                        papaRica.graph->getNearestNeighbourPathAStar(papaRica.hq->getPosAtVec(), vehicle));
+            else
+                papaRica.graph->setEdgePathType(
+                        papaRica.graph->getNearestNeighbourPathFloydWarshall(papaRica.hq->getPosAtVec(), vehicle));
+            viewGraph(papaRica.graph);
+        }
     }
 
     return 0;

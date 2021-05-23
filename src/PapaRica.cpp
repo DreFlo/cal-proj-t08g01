@@ -105,7 +105,7 @@ void PapaRica::setHQ(int nodePos) {
 void PapaRica::createClients(int number) {
     for(int i = 0; i < number; i++) {
         Client client;
-        client.setPackageNumber( 5);
+        client.setPackageNumber(rand() % 10 + 4);
         client.setAddress(graph->getRandomNode()->getPosition());
         addOrder(client);
     }
@@ -145,8 +145,7 @@ void PapaRica::input() {
                 cout << "[1] Light" << endl;
                 cout << "[2] Motorcycle" << endl;
                 cout << "[3] Go to the main menu" << endl;
-                cin.ignore(1000, '\n');
-                getline(cin, type);
+                cin >> type;
                 vehicle_type v_type;
                 if(type == "0" || type == "1" || type == "2"){
                     if(type == "0") v_type = HEAVY;
